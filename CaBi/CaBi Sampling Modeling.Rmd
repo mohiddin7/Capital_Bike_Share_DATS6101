@@ -55,22 +55,13 @@ CaBi <- CaBi[, -c(1)]
 The total noof rows now changes to `r nrow(CaBi)` from `r nrow(CaBiO)`. 
 
 
-# Modeling
+## Categorical Variables Modeling
 
-
-```{r}
-summary(aov(noofbikes~season,data=CaBi))
-summary(aov(noofbikes~holiday,data=CaBi))
-summary(aov(noofbikes~weekday,data=CaBi))
-summary(aov(noofbikes~weather,data=CaBi))
-```
-
-
+### ANOVA for all Categorical Variables
 
 
 
 ```{r}
-
 library(ggplot2)
 
 
@@ -79,22 +70,46 @@ ggplot(CaBi, aes(x=season, y=noofbikes)) +
   geom_violin() +
   labs(title = "Bike Rentals by Season", x = "Season", y = "Number of Bikes Rented")
 
+summary(aov(noofbikes~season,data=CaBi))
+
+
+```
+
+
+```{r}
 # Create violin plot for holiday
 ggplot(CaBi, aes(x=holiday, y=noofbikes)) + 
   geom_violin() +
   labs(title = "Bike Rentals by Holiday", x = "Holiday", y = "Number of Bikes Rented")
 
+
+summary(aov(noofbikes~holiday,data=CaBi))
+
+```
+
+
+```{r}
 # Create violin plot for weekday
 ggplot(CaBi, aes(x=weekday, y=noofbikes)) + 
   geom_violin() +
   labs(title = "Bike Rentals by Weekday", x = "Weekday", y = "Number of Bikes Rented")
 
+summary(aov(noofbikes~weekday,data=CaBi))
+
+
+```
+
+
+```{r}
 # Create violin plot for weather
 ggplot(CaBi, aes(x=weather, y=noofbikes)) + 
   geom_violin() +
   labs(title = "Bike Rentals by Weather", x = "Weather", y = "Number of Bikes Rented")
 
+summary(aov(noofbikes~weather,data=CaBi))
+
 ```
+
 
 
 ```{r}
