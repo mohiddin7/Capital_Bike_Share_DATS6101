@@ -1,0 +1,531 @@
+---
+title: "CaBi Sampling Modeling"
+author: "TEAM SIM"
+date: "2023-04-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Modeling
+
+
+```{r}
+#Making sure the all the variables are in correct datatypes
+summary(CaBi)
+```
+
+Instead of doing the sampling with the large data, we mutated the `noofbikes` with the group of `started_at` which was previously did with both `started_at` and `start_station_name`. Droped the few variables(`started_at`,`start_station_name`,`member_type`,`duration`,`month`,`year`) with are not required during the modeling.
+
+
+```{r}
+
+
+# option 1 for choosing only the date filter and rows will the noof days from october 2010
+
+CaBiO <- CaBi
+CaBi <- CaBi[, -c(2,3,4,16,17)]
+CaBi <- CaBi %>% 
+  group_by(started_at) %>% 
+  mutate(noofbikes = sum(noofbikes)) %>% 
+  distinct(started_at, .keep_all = TRUE) %>% 
+  arrange(started_at)
+CaBi <- CaBi[, -c(1)]
+
+
+
+
+
+# Option 2 for the sampling selecting 10k rows from the large set
+
+# 
+# # Set seed for reproducibility
+# set.seed(1)
+# 
+# # Randomly select 10000 observations
+# CaBi <- CaBiO[sample(nrow(CaBiO), 10000), ]
+# summary(CaBi)
+# 
+# write.csv(CaBi,file = "CaBi_Sampled10k.csv",row.names = F)
+
+```
+
+The total noof rows now changes to `r nrow(CaBi)` from `r nrow(CaBiO)`. 
+
+
+# Modeling
+
+
+```{r}
+summary(aov(noofbikes~season,data=CaBi))
+summary(aov(noofbikes~holiday,data=CaBi))
+summary(aov(noofbikes~weekday,data=CaBi))
+summary(aov(noofbikes~weather,data=CaBi))
+```
+
+
+
+
+
+```{r}
+
+library(ggplot2)
+
+
+# Create violin plot for season
+ggplot(CaBi, aes(x=season, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Season", x = "Season", y = "Number of Bikes Rented")
+
+# Create violin plot for holiday
+ggplot(CaBi, aes(x=holiday, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Holiday", x = "Holiday", y = "Number of Bikes Rented")
+
+# Create violin plot for weekday
+ggplot(CaBi, aes(x=weekday, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Weekday", x = "Weekday", y = "Number of Bikes Rented")
+
+# Create violin plot for weather
+ggplot(CaBi, aes(x=weather, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Weather", x = "Weather", y = "Number of Bikes Rented")
+
+```
+
+
+```{r}
+summary(lm(noofbikes ~ temperature, data = CaBi))
+summary(lm(noofbikes ~ feelsliketemp, data = CaBi))
+summary(lm(noofbikes ~ dew, data = CaBi))
+summary(lm(noofbikes ~ humidity, data = CaBi))
+summary(lm(noofbikes ~ windspeed, data = CaBi))
+summary(lm(noofbikes ~ uvindex, data = CaBi))
+```
+
+
+```{r}
+library(ggplot2)
+
+# create scatter plot
+te <- ggplot(data = CaBi, aes(x = temperature, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "temperature vs noofbikes",
+       x = "temperature",
+       y = "noofbikes")
+
+te
+```
+
+
+
+```{r}
+library(ggplot2)
+
+# create scatter plot
+fte <- ggplot(data = CaBi, aes(x = feelsliketemp, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "feelsliketemp vs noofbikes",
+       x = "feelsliketemp",
+       y = "noofbikes")
+
+fte
+```
+
+
+
+
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+de <- ggplot(data = CaBi, aes(x = dew, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "Dew vs noofbikes",
+       x = "Dew",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+de
+```
+
+
+
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+hu <- ggplot(data = CaBi, aes(x = humidity, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "humidity vs noofbikes",
+       x = "humidity",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+hu
+```
+
+
+
+
+
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+wi <- ggplot(data = CaBi, aes(x = windspeed, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "windspeed vs noofbikes",
+       x = "windspeed",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+wi
+```
+
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+te <- ggplot(data = CaBi, aes(x = uvindex, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "uvindex vs noofbikes",
+       x = "uvindex",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+te
+```
+
+
+
+
+```{r}
+library(caret)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Split data into 80% training and 20% testing
+train_index <- createDataPartition(CaBi$noofbikes, p = 0.8, list = FALSE)
+CaBitrain <- CaBi[train_index, ]
+CaBitest <- CaBi[-train_index, ]
+CaBitrain <- CaBitrain[, -c(3)]
+CaBitt <- CaBitrain
+CaBitest <- CaBitest[, -c(3)]
+summary(CaBitrain)
+summary(CaBitest)
+```
+
+
+
+
+```{r}
+# Fit a full model with all predictors
+full_model <- lm(noofbikes ~ temperature  + dew + humidity + windspeed + uvindex, data = CaBitrain)
+
+# Perform a backward stepwise regression
+step_model <- step(full_model, direction = "backward")
+summary(step_model)
+```
+
+
+
+
+```{r}
+# summary(CaBi)
+# CaBitrain <- subset(CaBi, select = -c(started_at, start_station_name,member_type,duration,month,year))
+# summary(CaBitrain)
+# write.csv(CaBitrain,file = "CaBitrain10k.csv",row.names = F)
+
+```
+
+
+
+
+
+```{r}
+lmfit <- lm(noofbikes~.,data = CaBitrain)
+sumLm <- summary(lmfit)
+sumLm
+```
+```{r}
+library(caret)
+library(lift)
+set.seed(123)
+
+# Define the training control with 10-fold cross-validation
+train_control <- trainControl(method = "cv", number = 10)
+
+# Train the model using linear regression and 10-fold cross-validation
+model <- train(noofbikes ~ ., data = CaBitrain, method = "lm", trControl = train_control)
+
+# Print the summary of the model
+summary(model)
+
+```
+```{r}
+# # Set seed for reproducibility
+# set.seed(123)
+# 
+# # Randomly select 10000 observations
+# CaBitest <- CaBiO[sample(nrow(CaBiO), 5000), ]
+# summary(CaBitest)
+# CaBitest <- subset(CaBitest, select = -c(started_at, start_station_name,member_type,duration,month,year))
+# summary(CaBitest)
+# 
+# summary(CaBitrain)
+```
+
+
+
+```{r}
+library(caret)
+library(rpart)
+library(rpart.plot)
+set.seed(123)
+CaBiDT <- caret::train(noofbikes~., data=CaBitrain, method="rpart2", tuneLength = 9, trControl = trainControl(method = "repeatedcv",number =5, repeats = 3))
+plot(CaBiDT,main = "Tuning Regression Decision Tree")
+```
+
+
+
+
+```{r}
+rpart.plot(CaBiDT$finalModel, type = 5, box.palette = "Or", shadow.col = "gray", main = "Regression Decision Tree for predicting the number of bikes")
+```
+
+
+```{r}
+ImpDT <- caret::varImp(CaBiDT)
+ImpDT
+plot(ImpDT,top = 10)
+```
+
+
+```{r}
+CaBiDTPred <- predict(CaBiDT,CaBitt)
+
+library(kableExtra)
+data.frame(
+  R2 = R2(CaBiDTPred,CaBitt$noofbikes),
+  RMSE = RMSE(CaBiDTPred,CaBitt$noofbikes),
+  MAE = MAE(CaBiDTPred,CaBitt$noofbikes)
+) %>% kable() %>% kable_styling()
+```
+
+
+```{r}
+CaBiBDT <- caret::train(noofbikes~.,CaBitrain,method="treebag",trControl = trainControl(method = "repeatedcv", repeats = 3, number = 10))
+
+ImpBDT <- varImp(CaBiBDT)
+ImpBDT
+plot(ImpBDT,top = 15)
+```
+
+
+
+```{r}
+CaBiBDTPred <- predict(CaBiBDT,CaBitt)
+
+library(kableExtra)
+data.frame(
+  R2 = R2(CaBiBDTPred,CaBitt$noofbikes),
+  RMSE = RMSE(CaBiBDTPred,CaBitt$noofbikes),
+  MAE = MAE(CaBiBDTPred,CaBitt$noofbikes)
+) %>% kable() %>% kable_styling()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+library(randomForest)
+
+# Fit a random forest model
+set.seed(123)
+rf_model <- randomForest(noofbikes ~ ., data = CaBitrain,ntree = 498,mtry = sqrt(ncol(CaBitrain)),importance = TRUE)
+rf_model
+
+varImpPlot(rf_model) 
+
+# Make predictions on the testing set
+predictions <- predict(rf_model, CaBitt)
+
+# Calculate the root mean squared error
+rmse <- sqrt(mean((predictions - CaBitt$noofbikes)^2))
+
+```
+
+
+
+```{r}
+library(kableExtra)
+data.frame(
+  R2 = R2(predictions, CaBitt$noofbikes),
+  RMSE = RMSE(predictions, CaBitt$noofbikes),
+  MAE = MAE(predictions, CaBitt$noofbikes)
+) %>% kable() %>% kable_styling()
+```
+
+
+
+
+
+```{r}
+# Load required packages
+library(shiny)
+# Create the user interface
+ui <- fluidPage(
+  
+  # Add input fields for each variable
+  numericInput("noofbikes", "noofbikes:", value = 70),
+  numericInput("temperature", "Temperature:", value = 70.3, min = -30.0, max = 120.0),
+  numericInput("dew", "Dew Point:", value = 10.3, min = -20.0, max = 100.0),
+  numericInput("humidity", "Humidity:", value = 50.23, min = 0.0, max = 100.0),
+  numericInput("windspeed", "Wind Speed:", value = 10.23, min = 0.0, max = 100.0),
+  numericInput("uvindex", "UV Index:", value = 7.000, min = 0.000, max = 10.000),
+  selectInput("weather", "Weather:",
+              choices = c("Cloudy","OvercastRain","Rain","Overcast","Clear","Snow","OvercastSnow"),
+              selected = "Clear"),
+  selectInput("weekday", "weekday:",
+              choices = c("Weekend","weekday"),
+              selected = "Weekend"),
+  selectInput("holiday", "holiday:",
+              choices = c("holiday","not holiday"),
+              selected = "holiday"),
+  # checkboxInput("weekday", "Weekend", value = FALSE),
+  # checkboxInput("holiday", "Holiday:", value = FALSE),
+  selectInput("season", "Season:",
+              choices = c("Winter","Spring","Summer","Fall"),
+              selected = "Winter"),
+  
+  # Add output for predicted number of bikes
+  verbatimTextOutput("pred_output")
+)
+
+# Create the server
+server <- function(input, output) {
+  
+  # Predict number of bikes
+  output$pred_output <- renderPrint({
+    new_data <- data.frame(
+      noofbikes = as.integer(input$noofbikes),
+      temperature = as.numeric(input$temperature),
+      dew = as.numeric(input$dew),
+      humidity = as.numeric(input$humidity),
+      windspeed = as.numeric(input$windspeed),
+      uvindex = as.numeric(input$uvindex),
+      weather = as.factor(input$weather),
+      weekday = as.factor(input$weekday),
+      holiday = as.factor(input$holiday),
+      season = as.factor(input$season)
+    )
+    prediction <- predict(rf_model, new_data)
+    paste("Predicted Number of Bikes: ", round(prediction))
+  })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)
+
+```
+
+
+```{r}
+
+new_data <-  data.frame("noofbikes"=40,
+                        "temperature" = 50.3,
+                        "dew" = 18.9,
+                        "humidity" = 62.35,
+                        "windspeed" = 13.58,
+                        "uvindex" = 3.001,
+                        "weather" = "Clear",
+                        "weekday" = "Weekend",
+                        "holiday" = "holiday",
+                        "season" = "Summer")
+
+
+new_data$noofbikes <- as.integer(new_data$noofbikes)
+new_data$temperature <- as.numeric(new_data$temperature)
+new_data$dew <- as.numeric(new_data$dew)
+new_data$humidity <- as.numeric(new_data$humidity)
+new_data$windspeed <- as.numeric(new_data$windspeed)
+new_data$uvindex <- as.numeric(new_data$uvindex)
+new_data$weather <- as.character(new_data$weather)
+new_data$weekday <- as.character(new_data$weekday)
+new_data$holiday <- as.character(new_data$holiday)
+new_data$season <- as.character(new_data$season)
+
+
+
+prediction <- predict(rf_model, new_data[2:10])
+    paste("Predicted Number of Bikes: ", round(prediction))
+    
+    
+    
+str(rf_model$forest$xlevels)
+str(new_data[,2:10])
+    
+    
+```
+
+
+
+
+
+
+
+
+`
+
+
