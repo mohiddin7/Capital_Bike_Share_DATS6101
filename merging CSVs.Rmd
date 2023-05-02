@@ -52,11 +52,7 @@ head(CaBiday)
 ```
 Result: Combines the "CaBi1" and "CaBi2" data frames into a new data frame called "CaBiday" with reordered columns. The `head()` function is used to display the first six rows of "CaBiday". 
 
-```
-CaBiday <- rbind(CaBi1, CaBi2)
-head(CaBiday)
-```
-Result:Combines the "CaBi1" and "CaBi2" data frames into a new data frame called "CaBiday" with reordered columns. The head() function is used to display the first six rows of "CaBiday".
+
 
 
 
@@ -247,10 +243,14 @@ CaBi <- CaBi[, -c(1, 2)]
 ```
 Result:Removes the first and second columns from the "CaBi" data frame and saves the modified data frame back into "CaBi".
 
-```{r}
-colnames(CaBi) <- c("started_at","start_station_name","member_type","duration","noofbikes","temperature","feelsliketemp","dew","humidity","windspeed","uvindex","weather","weekday","holiday","season","date","month","year")
 
+
+
+```{r}
+# renaming the colnames as we required!
+colnames(CaBi) <- c("started_at","start_station_name","member_type","duration","noofbikes","temperature","feelsliketemp","dew","humidity","windspeed","uvindex","weather","weekday","holiday","season","date","month","year")
 ```
+
 
 
 
