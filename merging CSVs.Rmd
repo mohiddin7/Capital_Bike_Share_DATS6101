@@ -244,6 +244,7 @@ Result: head(CaBi) is a function call that displays the first few rows of a data
 CaBi <- CaBi[, -c(1, 2)]
 
 ```
+Result:Removes the first and second columns from the "CaBi" data frame and saves the modified data frame back into "CaBi".
 
 ```{r}
 colnames(CaBi) <- c("started_at","start_station_name","member_type","duration","noofbikes","temperature","feelsliketemp","dew","humidity","windspeed","uvindex","weather","weekday","holiday","season","date","month","year")
