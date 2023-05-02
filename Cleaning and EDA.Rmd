@@ -114,3 +114,22 @@ CaBi$duration <- round(as.double(CaBi$duration), 2)
 
 CaBi <- CaBi[CaBi$duration > 0, ]
 ```
+
+# Standardizing `weather` categories in the `CaBi` data frame by grouping similar weather conditions together and converting it to a factor for efficient storage and analysis.
+```{r}
+unique(CaBiO$weather)
+
+
+CaBi$weather[CaBi$weather == "Partially cloudy"] <- "Cloudy"
+CaBi$weather[CaBi$weather == "Rain, Overcast"] <- "OvercastRain"
+CaBi$weather[CaBi$weather == "Rain, Partially cloudy"] <- "Rain"
+CaBi$weather[CaBi$weather == "Snow, Rain, Overcast"] <- "Overcast"
+CaBi$weather[CaBi$weather == "Snow, Rain, Partially cloudy"] <- "Cloudy"
+CaBi$weather[CaBi$weather == "Snow, Partially cloudy"] <- "Snow"
+CaBi$weather[CaBi$weather == "Snow, Overcast"] <- "OvercastSnow"
+CaBi$weather[CaBi$weather == "Snow, Rain"] <- "Rain"
+
+
+
+CaBi$weather <- as.factor(CaBi$weather)
+```
