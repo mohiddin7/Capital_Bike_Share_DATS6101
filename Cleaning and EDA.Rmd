@@ -75,3 +75,18 @@ summary(CaBi)
 CaBiO <- CaBi
 CaBi$started_at <- strptime(CaBi$started_at,format="%Y-%m-%d",tz = "EST")
 ```
+```{r}
+# street_address <- unique(sort(CaBi$start_station_name))
+# write.csv(street_address,"street_address.csv")
+
+
+
+print(sum(CaBi$start_station_name==""))
+
+
+
+subset(CaBi, start_station_name == "")[, c("noofbikes", "started_at","date","month","year")]
+
+CaBi$start_station_name[CaBi$start_station_name == ""] <- NA
+
+```
