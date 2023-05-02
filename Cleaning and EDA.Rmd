@@ -90,3 +90,19 @@ subset(CaBi, start_station_name == "")[, c("noofbikes", "started_at","date","mon
 CaBi$start_station_name[CaBi$start_station_name == ""] <- NA
 
 ```
+# The below code is for data cleaning and transformation of the `member_type` column in the "CaBi" data frame. It first displays unique values in the `member_type` column. Then it standardizes the capitalization of `casual` and `member` categories by replacing inconsistent values with lowercase. It counts the number of rows with the "Unknown" value in the `member_type` column and removes those rows from the data frame since they can't be classified. Finally, it converts the `member_type` column to a factor for efficient storage and analysis.
+
+```{r}
+unique(CaBi$member_type)
+
+
+CaBi$member_type[CaBi$member_type == "Casual"] <- "casual"
+CaBi$member_type[CaBi$member_type == "Member"] <- "member"
+
+sum(CaBi$member_type == "Unknown")
+
+CaBi <- CaBi[CaBi$member_type != "Unknown", ]
+
+CaBi$member_type <- as.factor(CaBi$member_type)
+
+```
