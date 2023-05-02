@@ -514,3 +514,9 @@ ggplot(grouped_df, aes(x = year, y = total_bikes, color = holiday, group = holid
         legend.title = element_blank(),
         legend.text = element_text(size = 10))
 ```
+```{r}
+# Removing all the variables from the environment for storage space expect for CaBi df
+rm(bike_count_year_station,bike_counts,CaBi_aggregated,df_agg,df_plot,edges,g,grouped,grouped_df)
+rm(holiday_bikes,map,max_bikes,max_min_bikes,min_bikes,most_popular_stations,popular_stations,season_data,year_weekday_percent)
+rm(corr_matrix,tbl,variables)
+```
