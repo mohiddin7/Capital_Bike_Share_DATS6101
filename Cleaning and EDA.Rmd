@@ -223,3 +223,97 @@ model <- aov(noofbikes ~ season, data = data)
 # summary of ANOVA model
 summary(model)
 ```
+
+# The below scatter plot shows that bike rental demand is influenced by both temperature and season. It indicates that the demand is highest in the spring and summer, with a peak in May and June, and less in the winter.
+```{r}
+ggplot(CaBi, aes(x = temperature, y = noofbikes, color = season)) +
+  geom_point(alpha = 0.5, size = 2.5) +
+  facet_wrap(~season, nrow = 2) +
+  labs(title = "Bike Rental Demand by Season and Temperature",
+       x = "Temperature", y = "Number of Bikes", color = "Season") +
+  scale_color_manual(values = c("#FFCC66", "#99CC99", "#FF9999", "#89F1FF"))
+```
+
+# The below plot shows that bike rental demand is higher on cloudy and clear days, followed by rainy days, and lower on days with overcast snow.
+```{r}
+ggplot(CaBi, aes(x = weather, y = noofbikes)) + 
+  geom_boxplot(fill = "lightblue", alpha = 0.7) +
+  labs(title = "Bike Demand by Weather Conditions", x = "Weather", y = "Number of Bikes") +
+  theme_bw()
+
+```
+
+# The below scatter plot displays the distribution of bike rentals by weather condition, with each point representing the number of bikes rented during a specific weather condition. The plot indicates that the highest demand for bike rentals occurs on cloudy and clear days, followed by rainy and overcast days.
+```{r}
+ggplot() + 
+  geom_jitter(aes(weather,noofbikes,color = weather),alpha=0.5, data=CaBi, show.legend = FALSE) + 
+  labs(title = "Distribution of Bikes by Weather Condition") + ylab("Number of Bikes") + xlab("Weather Condition")
+
+```
+
+
+
+# Creating a correlation matrix and plot of the variables in the CaBi dataset.
+```{r}
+
+# Select variables of interest
+variables <- c("noofbikes","temperature","feelsliketemp","dew","humidity","windspeed","uvindex")
+
+# Create correlation matrix
+corr_matrix <- cor(CaBi[, variables], use = "pairwise.complete.obs")
+
+tbl <- kable(round(corr_matrix,2))
+tbl
+
+
+# Plot correlation matrix
+corrplot(corr_matrix, type = "upper", order = "hclust", tl.col = "#FF9999", tl.srt = 45, tl.cex = 0.8)
+
+
+```
+# Creating a Shiny app with a checkbox input for selecting the year and a plot output that displays the number of bikes rented in different duration bins. The app uses the ggplot2 package to create a stacked bar chart, where the fill color represents the number of bikes rented. The chart is updated dynamically based on the selected year.
+```{r}
+
+# Load the data
+data <- CaBiO
+
+# Create the user interface
+ui <- fluidPage(
+  
+  # Add input checkbox for year
+  checkboxGroupInput("year", label = "Select year", 
+                     choices = unique(data$year), 
+                     selected = unique(data$year)),
+  
+  # Add output plot for number of bikes and duration
+  plotOutput("bike_duration_plot")
+)
+
+# Create the server
+server <- function(input, output) {
+  
+  # Create duration bins
+  data$duration_bins <- cut(data$duration, 
+                            breaks = c(0,900,1800,3200,7592116),
+                            labels = c("Short", "Medium", "Long", "Very Long"))
+  
+  # Filter data by year
+  filtered_data <- reactive({
+    data %>%
+      filter(year %in% input$year)
+  })
+  
+  # Plot number of bikes and duration
+  output$bike_duration_plot <- renderPlot({
+    ggplot(filtered_data(), aes(x = duration_bins)) +
+      geom_bar(aes(fill = noofbikes), position = "dodge") +
+      labs(x = "Duration Bins", y = "Number of Bikes") +
+      scale_fill_gradient(low = "blue", high = "red") +
+      theme_bw()
+  })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)
+
+```
