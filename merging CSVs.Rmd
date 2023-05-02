@@ -108,12 +108,6 @@ Result:Converts the "Date" column of the "holidays" data frame from character to
 write.csv(holidays,file = "holidays.csv",row.names = F)
 ```
 
-
-
-
-
-
-
 ```{r}
 
 # for weather 
@@ -140,6 +134,7 @@ weather_csv <- do.call(rbind, csv_list)
 weather_csv <- weather_csv[c(2,5,8,9,10,18,25,30)]
 write.csv(weather_csv,file = "weather_csv.csv",row.names = F)
 ```
+Result:Selects specific columns from the `weather_csv` data frame and writes the resulting data frame to a CSV file named "weather_csv.csv".
 
 
 ```{r}
@@ -148,6 +143,7 @@ head(CaBiday)
 weather <- read.csv("weather_csv.csv")
 head(weather)
 ```
+Result:Reading CaBiday.csv and weather_csv.csv files and displaying the top 6 rows of each file.
 
 
   
