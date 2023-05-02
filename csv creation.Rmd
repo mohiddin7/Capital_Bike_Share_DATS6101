@@ -9,8 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 
+
 ```
 
+
+
+The csv files are where downloaded from Capital Bikeshare website, where october 2010 to march 2020 have one set of variables and later ones have the other set. so two folder are created to read in two sets.
 
 ```{r}
 # # Set the path to the folder containing the CSV files
@@ -33,6 +37,7 @@ library(dplyr)
 ```
 
 
+This reading CSVs from the folders took so much time to get it merged in one file, so its saved to local that can we used easily on other platforms
 ```{r}
 # merged_csv1 <- merged_csv1[c(1,2,4,5,8,9)]
 # write.csv(merged_csv1,file = "merged_csv1.csv",row.names = F)
@@ -61,27 +66,30 @@ Result:Returns the number of rows in the data frame CaBi1. This number represent
 
 
 ```{r}
-# This code chunk groups the CaBi1 data frame by start time, calculates the total number of rides for each start time, creates a line plot of the total rides by start time using the ggplot2 package, and adds axis labels and a title to the plot.
+# Removing the Start.station.number and Bike.number as they are not required for further process
 CaBi1 <- CaBi1 %>% select(-Start.station.number)
 CaBi1 <- CaBi1 %>% select(-Bike.number)
 unique(CaBi1$Member.type)
 ```
-Result:Displays a line plot of the total number of Capital Bikeshare rides by start time, where the x-axis represents the start time in 24-hour clock format and the y-axis represents the total number of rides. The plot includes axis labels and a title.
+
+
 
 ```{r}
 #for Hourly
 # These commands prepare the date-time data in the `CaBi1` data frame for time-based analyses by converting the "Start.date" column to a POSIXct date-time object in Eastern Standard Time and rounding it to the nearest hour.
-CaBi1$Start.date <- strptime(CaBi1$Start.date,format="%Y-%m-%d %H:%M:%S",tz = "EST")
+# CaBi1$Start.date <- strptime(CaBi1$Start.date,format="%Y-%m-%d %H:%M:%S",tz = "EST")
 
-CaBi1$Start.date <- format(round(CaBi1$Start.date, units="hours"), format="%Y-%m-%d %H:%M:%S")
+# CaBi1$Start.date <- format(round(CaBi1$Start.date, units="hours"), format="%Y-%m-%d %H:%M:%S")
 ```
 Result:The "Start.date" column of the `CaBi1` data frame is rounded to the nearest hour and converted back to a character string in the format "%Y-%m-%d %H:%M:%S", which can be useful for aggregating the data by hour or for formatting the date-time data in a specific way.
 
+
+
 ```{r}
-#For day wise
+#For day wise start.date we removed the time
 CaBi1$Start.date <- strptime(CaBi1$Start.date,format="%Y-%m-%d",tz = "EST")
 ```
-Result: "Start.date" column of CaBi1 data frame is converted to a POSIXct date-time object at midnight in Eastern Standard Time.
+Result: "Start.date" column of CaBi1 data frame is converted to a POSIXct date object.
 
 ```{r}
 #Groups CaBi1 by "Start.date" and "Start.station", calculates number of bikes and average duration per group, keeps only distinct rows, and sorts by "Start.date" and "Start.station".
@@ -101,11 +109,13 @@ head(CaBi1)
 Result: The first few rows of the CaBi1 data frame are displayed.
 
 
+
 ```{r}
 # for hours
-write.csv(CaBi1,file = "CaBi1hour.csv",row.names = F)
+# write.csv(CaBi1,file = "CaBi1hour.csv",row.names = F)
 ```
 Result: The CaBi1 data frame is written to a CSV file named "CaBi1hour.csv" without row names.
+
 
 
 ```{r}
@@ -115,6 +125,8 @@ write.csv(CaBi1,file = "CaBi1days.csv",row.names = F)
 Result: The CaBi1 data frame is written to a CSV file named "CaBi1days.csv" without row names.
 
 
+
+Doing the same with folder 2 which has the different set of variables
 ```{r}
 # # Set the path to the folder containing the CSV files
 # csv_folder <- "~/Desktop/Intro to Data Science/final project CaBi/cabi all csv/csv/2 set"
@@ -195,9 +207,9 @@ CaBi2 <- CaBi2 %>% select(-ended_at)
 
 ```{r}
 #for Hourly
-CaBi2$started_at <- strptime(CaBi2$started_at,format="%Y-%m-%d %H:%M:%S",tz = "EST")
-
-CaBi2$started_at <- format(round(CaBi2$started_at, units="hours"), format="%Y-%m-%d %H:%M:%S")
+# CaBi2$started_at <- strptime(CaBi2$started_at,format="%Y-%m-%d %H:%M:%S",tz = "EST")
+# 
+# CaBi2$started_at <- format(round(CaBi2$started_at, units="hours"), format="%Y-%m-%d %H:%M:%S")
 ```
 Result:The "started_at" column of the CaBi2 data frame is rounded to the nearest hour and converted back to a character string in the format "%Y-%m-%d %H:%M:%S". This can be useful for aggregating the data by hour or for formatting the date-time data in a specific way.
 
@@ -214,10 +226,10 @@ Result:The "started_at" column of the CaBi2 data frame is converted from a chara
 
 
 ```{r}
+# formatting the duration variable to double type
+
 CaBi2$Duration <- as.double(CaBi2$Duration)
 ```
-Result: 
-
 
 
 ```{r}
@@ -228,12 +240,12 @@ CaBi2 <- CaBi2 %>%
   distinct(started_at, start_station_name, .keep_all = TRUE) %>% 
   arrange(started_at,start_station_name)
 ```
-Result: This command converts the "Duration" column of the CaBi2 data frame from a time difference object to a numeric object. This can be useful for performing calculations and aggregations on the duration data.
+Result: This command converts the "Duration" column of the CaBi2 data frame from a time difference object to a numeric object. This can be useful for performing calculations and aggregations on the duration data. same as for the set 1 noofbikes is mutated with the group of started_at, start_station_name.
 
 
 ```{r}
 # for hours
-write.csv(CaBi2,file = "CaBi2hour.csv",row.names = F)
+# write.csv(CaBi2,file = "CaBi2hour.csv",row.names = F)
 ```
 Result:The data frame CaBi2 to a CSV file named "CaBi2hour.csv" without row names.
 
@@ -242,7 +254,8 @@ Result:The data frame CaBi2 to a CSV file named "CaBi2hour.csv" without row name
 # for days
 write.csv(CaBi2,file = "CaBi2days.csv",row.names = F)
 ```
-Result:The CaBi2 data frame to two separate CSV files named "CaBi2hour.csv" and "CaBi2days.csv" with row names excluded.
+Result:The CaBi2 data frame to separate CSV file named CaBi2days.csv" with row names excluded. 
+The CSV1 and CSV2 files are next used in the merging process.
 
 
 
