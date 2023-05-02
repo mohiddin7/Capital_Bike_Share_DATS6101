@@ -1,0 +1,119 @@
+---
+title: "CaBi Modeling (sampling and NoCovid years)"
+author: "TEAM SIM"
+date: "2023-04-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Categorical Variables Test
+
+### ANOVA for all Categorical Variables
+
+```{r}
+#Making sure the all the variables are in correct datatypes
+summary(CaBi)
+```
+
+Instead of doing the sampling with the large data, we mutated the `noofbikes` with the group of `started_at` which was previously did with both `started_at` and `start_station_name`. Droped the few variables(`started_at`,`start_station_name`,`member_type`,`duration`,`month`,`year`) with are not required during the modeling.
+
+```{r}
+
+
+# option 1 for choosing only the date filter and rows will the noof days from october 2010
+
+# CaBiO <- CaBi
+CaBi <- CaBiO[, -c(2,3,4,16)]
+CaBi <- CaBi %>% 
+  group_by(started_at) %>% 
+  mutate(noofbikes = sum(noofbikes)) %>% 
+  distinct(started_at, .keep_all = TRUE) %>% 
+  arrange(started_at)
+
+
+
+CaBiforcovid <- CaBi[, -c(1)]
+CaBi <- CaBi[, -c(1,13)]
+
+
+
+# Option 2 for the sampling selecting 10k rows from the large set
+
+# 
+# # Set seed for reproducibility
+# set.seed(123)
+# 
+# # Randomly select 10000 observations
+# CaBi <- CaBiO[sample(nrow(CaBiO), 10000), ]
+# summary(CaBi)
+# 
+# write.csv(CaBi,file = "CaBi_Sampled10k.csv",row.names = F)
+
+
+
+
+# # Set seed for reproducibility
+# set.seed(123)
+# 
+# # Randomly select 10000 observations
+# CaBitest <- CaBiO[sample(nrow(CaBiO), 5000), ]
+# summary(CaBitest)
+# CaBitest <- subset(CaBitest, select = -c(started_at, start_station_name,member_type,duration,month,year))
+# summary(CaBitest)
+# 
+# summary(CaBitrain)
+
+
+```
+
+The total noof rows now changes to `r nrow(CaBi)` from `r nrow(CaBiO)`.
+
+```{r}
+library(ggplot2)
+
+
+# Create violin plot for season
+ggplot(CaBi, aes(x=season, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Season", x = "Season", y = "Number of Bikes Rented")
+
+summary(aov(noofbikes~season,data=CaBi))
+
+```
+
+```{r}
+# Create violin plot for holiday
+ggplot(CaBi, aes(x=holiday, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Holiday", x = "Holiday", y = "Number of Bikes Rented")
+
+summary(aov(noofbikes~holiday,data=CaBi))
+
+```
+
+```{r}
+# Create violin plot for weekday
+ggplot(CaBi, aes(x=weekday, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Weekday", x = "Weekday", y = "Number of Bikes Rented")
+
+summary(aov(noofbikes~weekday,data=CaBi))
+
+```
+
+```{r}
+# Create violin plot for weather
+ggplot(CaBi, aes(x=weather, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Weather", x = "Weather", y = "Number of Bikes Rented")
+
+summary(aov(noofbikes~weather,data=CaBi))
+
+```
+
+
+
+
