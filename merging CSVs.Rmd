@@ -104,6 +104,7 @@ Result:Converts the "Date" column of the "holidays" data frame from character to
 
 
 ```{r}
+#The `holidays` data frame is written to a CSV file named "holidays.csv" in the current working directory with row names excluded.
 write.csv(holidays,file = "holidays.csv",row.names = F)
 ```
 
