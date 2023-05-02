@@ -444,6 +444,18 @@ data.frame(
 The R2 score is 0.5086464, which means that the predictor variables explain around 51% of the variance in the target variable.The RMSE is 2682.561, which means that on average, the predicted values are about 2682.561 units away from the actual values.
 
 
+```{r}
+
+ggplot(CaBiO, aes(x = year, y = noofbikes, fill = year)) + 
+  geom_bar(stat = "identity") + 
+  labs(title = "Number of Bikes by Year", 
+       x = "Year", 
+       y = "Number of Bikes") + 
+  theme_minimal()
+
+```
+
+
 ### Spliting the Data by removing covid years
 
 
