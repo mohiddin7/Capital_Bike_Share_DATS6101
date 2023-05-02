@@ -222,6 +222,7 @@ Result:creates a new column called "season" in a data frame called "CaBi". The v
 ```{r}
 head(CaBi)
 ```
+Result:Displays the first few rows of the "CaBi" 
 
 
 ```{r}
