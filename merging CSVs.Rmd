@@ -258,6 +258,7 @@ colnames(CaBi) <- c("started_at","start_station_name","member_type","duration","
 write.csv(CaBi,file = "CaBi.csv",row.names = F)
 
 ```
+Result:Writes the contents of the "CaBi" data frame into a CSV file called "CaBi.csv" without including row names.
 
 
 
