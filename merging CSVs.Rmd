@@ -71,6 +71,7 @@ Result:Writes the "CaBiday" data frame to a CSV file named "CaBiday.csv" in the 
 ```{r}
 holidays <- read.csv("holiday.csv")
 ```
+Result:Reads a CSV file named "holiday.csv" into a new data frame called "holidays".
 
 
 ```{r}
