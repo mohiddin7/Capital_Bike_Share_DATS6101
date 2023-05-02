@@ -153,6 +153,7 @@ weather$datetime <- strptime(weather$datetime,format="%Y-%m-%d",tz = "EST")
 
 CaBiday$temp <- strptime(CaBiday$started_at,format="%Y-%m-%d",tz = "EST")
 ```
+Result:Converts the started_at variable to Date type, which can be compared to the datetime variable in the weather dataset.
 
 
 
