@@ -1,0 +1,477 @@
+---
+title: "CaBi Modeling (sampling and NoCovid years)"
+author: "TEAM SIM"
+date: "2023-04-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Categorical Variables Test
+
+### ANOVA for all Categorical Variables
+
+```{r}
+#Making sure the all the variables are in correct datatypes
+summary(CaBi)
+```
+
+Instead of doing the sampling with the large data, we mutated the `noofbikes` with the group of `started_at` which was previously did with both `started_at` and `start_station_name`. Droped the few variables(`started_at`,`start_station_name`,`member_type`,`duration`,`month`,`year`) with are not required during the modeling.
+
+```{r}
+
+
+# option 1 for choosing only the date filter and rows will the noof days from october 2010
+
+# CaBiO <- CaBi
+CaBi <- CaBiO[, -c(2,3,4,16)]
+CaBi <- CaBi %>% 
+  group_by(started_at) %>% 
+  mutate(noofbikes = sum(noofbikes)) %>% 
+  distinct(started_at, .keep_all = TRUE) %>% 
+  arrange(started_at)
+
+
+
+CaBiforcovid <- CaBi[, -c(1)]
+CaBi <- CaBi[, -c(1,13)]
+
+
+
+# Option 2 for the sampling selecting 10k rows from the large set
+
+# 
+# # Set seed for reproducibility
+# set.seed(123)
+# 
+# # Randomly select 10000 observations
+# CaBi <- CaBiO[sample(nrow(CaBiO), 10000), ]
+# summary(CaBi)
+# 
+# write.csv(CaBi,file = "CaBi_Sampled10k.csv",row.names = F)
+
+
+
+
+# # Set seed for reproducibility
+# set.seed(123)
+# 
+# # Randomly select 10000 observations
+# CaBitest <- CaBiO[sample(nrow(CaBiO), 5000), ]
+# summary(CaBitest)
+# CaBitest <- subset(CaBitest, select = -c(started_at, start_station_name,member_type,duration,month,year))
+# summary(CaBitest)
+# 
+# summary(CaBitrain)
+
+
+```
+
+The total noof rows now changes to `r nrow(CaBi)` from `r nrow(CaBiO)`.
+
+```{r}
+library(ggplot2)
+
+
+# Create violin plot for season
+ggplot(CaBi, aes(x=season, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Season", x = "Season", y = "Number of Bikes Rented")
+
+summary(aov(noofbikes~season,data=CaBi))
+
+```
+
+```{r}
+# Create violin plot for holiday
+ggplot(CaBi, aes(x=holiday, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Holiday", x = "Holiday", y = "Number of Bikes Rented")
+
+summary(aov(noofbikes~holiday,data=CaBi))
+
+```
+
+```{r}
+# Create violin plot for weekday
+ggplot(CaBi, aes(x=weekday, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Weekday", x = "Weekday", y = "Number of Bikes Rented")
+
+summary(aov(noofbikes~weekday,data=CaBi))
+
+```
+
+```{r}
+# Create violin plot for weather
+ggplot(CaBi, aes(x=weather, y=noofbikes)) + 
+  geom_violin() +
+  labs(title = "Bike Rentals by Weather", x = "Weather", y = "Number of Bikes Rented")
+
+summary(aov(noofbikes~weather,data=CaBi))
+
+```
+
+
+
+# Modeling
+
+### Linear Regression for Numeric variables Induvidually
+
+#### temperature vs noofbikes
+
+```{r}
+library(ggplot2)
+
+# create scatter plot
+te <- ggplot(data = CaBi, aes(x = temperature, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "temperature vs noofbikes",
+       x = "temperature",
+       y = "noofbikes")
+
+ggplotly(te)
+
+summary(lm(noofbikes ~ temperature, data = CaBi))
+
+```
+
+#### feelsliketemp vs noofbikes
+
+```{r}
+library(ggplot2)
+
+# create scatter plot
+fte <- ggplot(data = CaBi, aes(x = feelsliketemp, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "feelsliketemp vs noofbikes",
+       x = "feelsliketemp",
+       y = "noofbikes")
+
+ggplotly(fte)
+
+summary(lm(noofbikes ~ feelsliketemp, data = CaBi))
+
+```
+
+#### Dew vs noofbikes
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+de <- ggplot(data = CaBi, aes(x = dew, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "Dew vs noofbikes",
+       x = "Dew",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+ggplotly(de)
+
+summary(lm(noofbikes ~ dew, data = CaBi))
+
+```
+
+#### humidity vs noofbikes
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+hu <- ggplot(data = CaBi, aes(x = humidity, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "humidity vs noofbikes",
+       x = "humidity",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+ggplotly(hu)
+summary(lm(noofbikes ~ humidity, data = CaBi))
+
+
+```
+
+#### windspeed vs noofbikes
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+wi <- ggplot(data = CaBi, aes(x = windspeed, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "windspeed vs noofbikes",
+       x = "windspeed",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+ggplotly(wi)
+summary(lm(noofbikes ~ windspeed, data = CaBi))
+
+```
+
+#### uvindex vs noofbikes
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+uv <- ggplot(data = CaBi, aes(x = uvindex, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "uvindex vs noofbikes",
+       x = "uvindex",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+ggplotly(uv)
+summary(lm(noofbikes ~ uvindex, data = CaBi))
+
+```
+
+### Spliting the Data
+
+```{r}
+library(caret)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Split data into 80% training and 20% testing
+train_index <- createDataPartition(CaBi$noofbikes, p = 0.8, list = FALSE)
+CaBitrain <- CaBi[train_index, ]
+CaBitest <- CaBi[-train_index, ]
+
+# droping feelsliketemp as is similar to temprature 
+CaBitrain <- CaBitrain[, -c(3)]
+CaBitest <- CaBitest[, -c(3)]
+
+# Checking the both the data points are same type are not
+summary(CaBitrain)
+summary(CaBitest)
+```
+
+The total noof observations from the Training data `CaBitrain` is `r nrow(CaBitrain)` observations and in test data set `CaBitest` is `r nrow(CaBitest)` observations
+
+### Step Linear Regression Model for Numeric Variables
+
+```{r}
+# Fit a full model with all predictors
+full_model <- lm(noofbikes ~ temperature  + dew + humidity + windspeed + uvindex, data = CaBitrain)
+
+# Perform a backward stepwise regression
+step_model <- step(full_model, direction = "backward")
+summary(step_model)
+
+```
+
+The initial AIC value is 58835.95, and the final AIC value after fitting the linear regression model is 58836. This indicates that the model with all the predictor variables, `temperature`, `dew`, `humidity`, `windspeed`, and `uvindex`, is a good fit for the data.
+
+The R-squared value of the model is 0.3202, indicating that 32.02% of the variance in `noofbikes` can be explained by the predictor variables in the model. The adjusted R-squared value is 0.3193, which adjusts for the number of predictor variables in the model.
+
+Overall, the results suggest that the combination of `temperature`, `dew`, `humidity`, `windspeed`, and `uvindex` can be used to predict the number of bikes rented in CaBitrain.
+
+
+### Linear Regression Model for all Variables
+
+```{r}
+library(caret)
+library(lift)
+set.seed(123)
+
+# Define the training control with 10-fold cross-validation
+train_control <- trainControl(method = "cv", number = 10)
+
+# Train the model using linear regression and 10-fold cross-validation
+model <- train(noofbikes ~ ., data = CaBitrain, method = "lm", trControl = train_control)
+
+# Print the summary of the model
+summary(model)
+
+```
+
+The first model, which includes all five independent variables (`temperature`, `dew`, `humidity`, `windspeed`, and `uvindex`), has an adjusted R-squared value of 0.3193, indicating that these variables explain 31.93% of the variability in the dependent variable. The F-statistic is significant (p-value \< 2.2e-16), indicating that the model is a good fit.
+
+The second model includes all of the independent variables from the first model, as well as additional categorical variables (`weather`, `weekday`, `holiday`, and `season`). This model has an adjusted R-squared value of 0.3961, indicating that these variables explain 39.61% of the variability in the dependent variable. The F-statistic is also significant (p-value \< 2.2e-16), indicating that the model is a good fit.
+
+In both models, `temperature`, `dew`, `humidity`, `windspeed`, and `uvindex` are all significant predictors of `noofbikes`. Additionally, certain categories of the categorical variables are also significant predictors `(i.e., weatherOvercast, weatherOvercastRain, weatherRain, seasonSpring, seasonSummer, and seasonWinter)`. The other categorical variables `(weatherCloudy, weatherOvercastSnow, weekdayWeekend, and holidayNot holiday)` are not significant predictors of `noofbikes`.
+
+### Decision Tree
+
+```{r}
+library(caret)
+library(rpart)
+library(rpart.plot)
+set.seed(123)
+CaBiDT <- caret::train(noofbikes~., data=CaBitrain, method="rpart2", tuneLength = 8, trControl = trainControl(method = "repeatedcv",number =5, repeats = 3))
+CaBiDT
+plot(CaBiDT,main = "Tuning Regression Decision Tree")
+```
+
+The resampling was performed using a 5-fold cross-validation with 3 repetitions, resulting in a total of 15 iterations. The summary of sample sizes indicates that each fold had approximately the same number of samples.
+
+The results show that the optimal value for maxdepth is 8, which gives an RMSE of 2959.329, an R-squared of 0.3784168, and an MAE of 2397.165.
+
+The Decision Tree plot for prediction is
+
+```{r}
+rpart.plot(CaBiDT$finalModel, type = 5, box.palette = "Or", shadow.col = "gray", main = "Decision Tree for predicting the number of bikes")
+```
+
+The importance of the variables from the decision tree
+
+```{r}
+ImpDT <- caret::varImp(CaBiDT)
+ImpDT
+plot(ImpDT,top = 10)
+```
+
+The most important feature is `temperature` with a value of 100, followed by `dew` with a value of 65.81, `uvindex` with a value of 38.52, and so on. The least important feature in this model appears to be `windspeed` with a value of 7.44.
+
+Now predict this on test data set `CaBitest`
+
+```{r}
+CaBiDTPred <- predict(CaBiDT,CaBitest)
+
+library(kableExtra)
+data.frame(
+  R2 = R2(CaBiDTPred,CaBitest$noofbikes),
+  RMSE = RMSE(CaBiDTPred,CaBitest$noofbikes),
+  MAE = MAE(CaBiDTPred,CaBitest$noofbikes)
+) %>% kable() %>% kable_styling()
+```
+
+Decision Tree with 36.65% of the variability in the target variable. The root mean squared error (RMSE) is 3044.444 . The mean absolute error (MAE) is 2440.491.
+
+
+#### Bagged Decision Tree
+
+With the tuned Decision Tree the R2 is low, for which trying the bagged Decision Tree could help in increase of R2
+
+```{r}
+CaBiBDT <- caret::train(noofbikes~.,CaBitrain,method="treebag",trControl = trainControl(method = "repeatedcv", repeats = 3, number = 10))
+
+ImpBDT <- varImp(CaBiBDT)
+ImpBDT
+plot(ImpBDT,top = 15)
+```
+
+Temperature has the highest importance score of 100, followed by dew, UV index, humidity, and season. Other variables such as windspeed, weather, and weekday/weekend have relatively lower importance scores, indicating that they have a lesser impact on the target variable.
+
+Now predict this on test data set `CaBitest`
+
+```{r}
+CaBiBDTPred <- predict(CaBiBDT,CaBitest)
+
+library(kableExtra)
+data.frame(
+  R2 = R2(CaBiBDTPred,CaBitest$noofbikes),
+  RMSE = RMSE(CaBiBDTPred,CaBitest$noofbikes),
+  MAE = MAE(CaBiBDTPred,CaBitest$noofbikes)
+) %>% kable() %>% kable_styling()
+```
+
+The R2 score is 0.4016212, which means that the predictor variables explain around 40% of the variance in the target variable.The RMSE is 2961.255, which means that on average, the predicted values are about 2961.255 units away from the actual values.
+
+
+
+#### Random Forest
+The variables that are most important with the Random Forest Model are plotted
+
+```{r}
+library(randomForest)
+
+# Fit a random forest model
+set.seed(123)
+rf_model <- randomForest(noofbikes ~ ., data = CaBitrain,ntree = 498,mtry = sqrt(ncol(CaBitrain)),importance = TRUE)
+rf_model
+
+varImpPlot(rf_model) 
+
+```
+
+```{r}
+# Make predictions on the testing set
+predictions <- predict(rf_model, CaBitest)
+
+# Calculate the root mean squared error
+rmse <- sqrt(mean((predictions - CaBitest$noofbikes)^2))
+
+library(kableExtra)
+data.frame(
+  R2 = R2(predictions, CaBitest$noofbikes),
+  RMSE = RMSE(predictions, CaBitest$noofbikes),
+  MAE = MAE(predictions, CaBitest$noofbikes)
+) %>% kable() %>% kable_styling()
+
+```
+
+The R2 score is 0.5086464, which means that the predictor variables explain around 51% of the variance in the target variable.The RMSE is 2682.561, which means that on average, the predicted values are about 2682.561 units away from the actual values.
+
+
+### Spliting the Data by removing covid years
+
+
+From the Above models and results the Accuracy is only 50%. For this the data is randomly split into 80% and 20%. So, Lets remove the covid years from Data set.
+
+Choosing the training data set with years 2010 to 2018 and testing data with years 2022 and 2023. Here 2019 2020 2021 years were ignored for which they are the covid years.
+
+
+```{r}
+
+test_rows <- CaBiforcovid$year %in% c(2022, 2023)
+covid_rows <- CaBiforcovid$year %in% c(2019, 2020,2021)
+
+# split the data into training and test sets
+CaBitraincovid <- CaBiforcovid[!test_rows, ]
+CaBitraincovid <- CaBiforcovid[!covid_rows, ]
+
+CaBitestcovid <- CaBiforcovid[test_rows, ]
+
+summary(CaBitraincovid)
+summary(CaBitestcovid)
+
+# droping feelsliketemp as is similar to temprature 
+CaBitraincovid <- CaBitraincovid[, -c(3,12)]
+CaBitestcovid <- CaBitestcovid[, -c(3,12)]
+
+summary(CaBitraincovid)
+summary(CaBitestcovid)
+```
+
+The total noof observations from the noncovid years Training data `CaBitraincovid` is `r nrow(CaBitraincovid)` observations and in test data set `CaBitestcovid` is `r nrow(CaBitestcovid)` observations
