@@ -377,3 +377,33 @@ data.frame(
 ```
 
 Decision Tree with 36.65% of the variability in the target variable. The root mean squared error (RMSE) is 3044.444 . The mean absolute error (MAE) is 2440.491.
+
+
+#### Bagged Decision Tree
+
+With the tuned Decision Tree the R2 is low, for which trying the bagged Decision Tree could help in increase of R2
+
+```{r}
+CaBiBDT <- caret::train(noofbikes~.,CaBitrain,method="treebag",trControl = trainControl(method = "repeatedcv", repeats = 3, number = 10))
+
+ImpBDT <- varImp(CaBiBDT)
+ImpBDT
+plot(ImpBDT,top = 15)
+```
+
+Temperature has the highest importance score of 100, followed by dew, UV index, humidity, and season. Other variables such as windspeed, weather, and weekday/weekend have relatively lower importance scores, indicating that they have a lesser impact on the target variable.
+
+Now predict this on test data set `CaBitest`
+
+```{r}
+CaBiBDTPred <- predict(CaBiBDT,CaBitest)
+
+library(kableExtra)
+data.frame(
+  R2 = R2(CaBiBDTPred,CaBitest$noofbikes),
+  RMSE = RMSE(CaBiBDTPred,CaBitest$noofbikes),
+  MAE = MAE(CaBiBDTPred,CaBitest$noofbikes)
+) %>% kable() %>% kable_styling()
+```
+
+The R2 score is 0.4016212, which means that the predictor variables explain around 40% of the variance in the target variable.The RMSE is 2961.255, which means that on average, the predicted values are about 2961.255 units away from the actual values.
