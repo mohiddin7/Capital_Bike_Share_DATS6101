@@ -159,7 +159,7 @@ Result:Converts the started_at variable to Date type, which can be compared to t
 
 
 ```{r}
-#merge the 2 dataframes
+#merges the 2 dataframes
 CaBi <- merge(CaBiday,weather,by.x = "temp",by.y = "datetime")
 ```
 
