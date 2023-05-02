@@ -523,3 +523,30 @@ data.frame(
 ```
 
 Decision Tree with 58.5% of the variability in the target variable. The root mean squared error (RMSE) is 2442.709. The mean absolute error (MAE) is 1957.982.
+
+#### Bagged Decision Tree
+
+With the tuned Decision Tree the R2 is low, for which trying the bagged Decision Tree could help in increase of R2
+
+```{r}
+CaBiBDT <- caret::train(noofbikes~.,CaBitraincovid,method="treebag",trControl = trainControl(method = "repeatedcv", repeats = 3, number = 10))
+
+ImpBDT <- varImp(CaBiBDT)
+ImpBDT
+plot(ImpBDT,top = 15)
+```
+
+we can see that temperature, dew, and seasonSummer are the top three variables that are most important for predicting the outcome variable. The importance of these variables decreases as we move down the list. Variables with importance measures close to zero are unlikely to contribute much to the model's predictive power.
+
+```{r}
+CaBiBDTPred <- predict(CaBiBDT,CaBitestcovid)
+
+library(kableExtra)
+data.frame(
+  R2 = R2(CaBiBDTPred,CaBitestcovid$noofbikes),
+  RMSE = RMSE(CaBiBDTPred,CaBitestcovid$noofbikes),
+  MAE = MAE(CaBiBDTPred,CaBitestcovid$noofbikes)
+) %>% kable() %>% kable_styling()
+```
+
+The R2 value has increased to 0.6656262, which indicates a better fit of the model to the data. Additionally, the RMSE value has decreased to 2245.789, and the MAE value has decreased to 1796.862. These values suggest that the model is performing better in terms of predicting the number of bike rentals based on the input features.
