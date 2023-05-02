@@ -358,3 +358,159 @@ ggplot(holiday_bikes, aes(x=Group.1, y=percent, fill=Group.1)) +
   ggtitle("Bike Demand by Holiday")
 
 ```
+Creating a bar chart showing the number of bike rentals by month, with all bars colored in a single shade of red. There is no legend since there is only one color used.
+```{r}
+
+# Create a bar chart with a single color
+ggplot(CaBi, aes(x = month, y = noofbikes, fill = "#ED4C67")) +
+  geom_bar(stat = "identity") +
+  labs(title = "Bike Rentals by Month", x = "Month", y = "Number of Bikes Rented") +
+  theme(plot.title = element_text(size = 14, face = "bold"), 
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        legend.position = "none")
+
+
+```
+
+Summarizing the total number of bikes rented by month, and creates a pie chart showing the proportion of total bikes rented by month. The pie chart uses a different color for each month.
+```{r}
+# Summarize noofbikes by month
+monthly_bikes <- CaBi %>%
+  filter(year < 2022) %>%
+  group_by(month) %>%
+  summarize(total_bikes = sum(noofbikes))
+
+# Define colors for each month
+colors <- c("#7fc97f", "#beaed4", "#fdc086", "#ffff99", "#386cb0", "#f0027f",
+            "#bf5b17", "#666666", "#1b9e77", "#d95f02", "#7570b3", "#e7298a")
+
+# Create pie chart
+ggplot(monthly_bikes, aes(x = "", y = total_bikes, fill = factor(month))) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y") +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  labs(title = "Bike Demand by Month", fill = "Month")
+
+```
+
+
+
+Creating a graph visualization of bike station pairs and their number of trips using the igraph library. Vertex size and color are based on the number of trips, while edge color and width are also based on the number of trips.
+```{r}
+# Create an edgelist of bike station pairs and their number of trips
+edges <- CaBi %>%
+  group_by(start_station_name) %>%
+  summarize(trips = n()) %>%
+  ungroup()
+
+# Create a graph object
+g <- graph_from_data_frame(edges, directed = FALSE)
+
+# Set the vertex size and color based on the number of trips
+V(g)$size <- degree(g) * 3
+V(g)$color <- "lightblue"
+
+# Set the edge color and width based on the number of trips
+E(g)$color <- "gray"
+E(g)$width <- log(edges$trips)
+
+# Plot the graph
+plot(g, vertex.label = NA)
+
+```
+
+```{r}
+# library(leaflet)
+# 
+# # Create map
+# map <- leaflet() %>%
+#   addTiles() %>%
+#   setView(lng = -77.0369, lat = 38.9072, zoom = 11)
+# 
+# # Add markers for bike stations
+# map_markers <- map %>%
+#   addMarkers(lng = CaBi$start_station_longitude, lat = CaBi$start_station_latitude, 
+#              popup = CaBi$start_station_name, 
+#              label = paste0(round(CaBi$noofbikes/10), "k"), 
+#              labelOptions = labelOptions(noHide = T, textOnly = F, direction = "auto"), 
+#              radius = sqrt(CaBi$noofbikes)*10, 
+#              opacity = 0.8)
+# 
+# # Display the map
+# map_markers
+```
+
+
+Grouping a bike sharing dataframe by year and start station name, calculating the total bikes for each group, and finding the stations with the maximum and minimum total bikes for each year.
+```{r}
+# group the dataframe by year and start_station_name, and calculate the total_bikes for each group
+grouped_df <- CaBi %>% 
+  group_by(year, start_station_name) %>% 
+  summarize(total_bikes = sum(noofbikes))
+
+grouped_df <- na.omit(grouped_df)
+
+
+# find the station names with the maximum and minimum total_bikes for each year
+max_bikes <- grouped_df %>% 
+  group_by(year) %>% 
+  filter(total_bikes == max(total_bikes)) %>% 
+  select(year, start_station_name, total_bikes)%>%
+  distinct(year, .keep_all = TRUE)
+
+min_bikes <- grouped_df %>% 
+  group_by(year) %>% 
+  filter(total_bikes == min(total_bikes)) %>% 
+  select(year, start_station_name, total_bikes)%>%
+  distinct(year, .keep_all = TRUE)
+
+
+
+
+```
+
+Creating a line plot with maximum and minimum bike demand by year and station. Firstly grouping the data by year and start station, and finding the stations with the highest and lowest demand for each year. The plot shows the total bikes rented for each station on a line graph for each year, with markers indicating the station name.
+```{r}
+# Create the first line plot with max bike demand data
+plot(max_bikes$year, max_bikes$total_bikes,ylim = c(-10000, 80000), type = "l", col = "red",
+     xlab = "Year", ylab = "Total Bikes",
+     main = "Max and Min Bikes by Year and Station", cex.axis = 1)
+points(max_bikes$year, max_bikes$total_bikes, col = "red", pch = 16)
+text(max_bikes$year, max_bikes$total_bikes, labels = max_bikes$start_station_name, pos = 3, cex = 0.5)
+
+
+# Create the second line plot with min bike demand data
+lines(min_bikes$year, min_bikes$total_bikes, pch = 18, col = "blue", type = "b", lty = 2)
+
+# Add points to the second line from start station names
+points(min_bikes$year, min_bikes$total_bikes, pch = 18, col = "blue")
+text(min_bikes$year, min_bikes$total_bikes,labels = min_bikes$start_station_name, pos = 3, cex = 0.3)
+
+# Add a legend to the plot
+legend("topleft", legend=c("Max Bikes", "Min Bikes"),
+       col=c("red", "blue"), lty = 1:2, cex=0.8)
+
+```
+
+
+
+Grouping the CaBi data by year and holiday status and calculates total bikes. Then creating a stacked line graph using ggplot to visualize bike demand by year and holiday type. The resulting graph shows two lines, one for holidays and one for non-holidays, with different colors representing each category.
+```{r}
+# Group the data by year and holiday status and calculate total bikes
+grouped_df <- CaBi %>% group_by(year, holiday) %>%
+  summarize(total_bikes = sum(noofbikes))
+
+# Create a stacked line graph
+ggplot(grouped_df, aes(x = year, y = total_bikes, color = holiday, group = holiday)) +
+  geom_line(size = 1) +
+  scale_color_manual(values = c("#E69F00", "#56B4E9"), name = "Holiday Type") +
+  labs(title = "Bike Demand by Year and Holiday Type", x = "Year", y = "Total Bikes") +
+  # scale_x_discrete(labels = c("2010" ,"2011", "2012", "2013" ,"2014", "2015", "2016", "2017", "2018", "2019", "2020" ,"2021", "2022", "2023"))+
+  theme(plot.title = element_text(size = 14, face = "bold"), 
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10))
+```
