@@ -19,13 +19,13 @@ library(ggplot2)
 library(tidyverse)
 library(corrplot)
 library(knitr)
-library("kableExtra")
+library(kableExtra)
 library(tidyr)
 library(lubridate)
 library(shiny)
 library(igraph)
 ```
-`r citation("ggmap")`
+
 
 ```{r}
 # Read in "CaBi.csv" file as a data frame called "CaBi"
@@ -38,6 +38,7 @@ head(CaBi)
 ```
 
 ```{r}
+# citation("ggmap")
 # register_google(key = "AIzaSyCFZ6fQYlMH1t8tCJTXVDk4U9rumyz7nzo")
 # 
 # geocodes <- geocode(CaBi$start_station_name)
@@ -102,7 +103,7 @@ CaBi$start_station_name[CaBi$start_station_name == ""] <- NA
 
 
 
-### The below code is for data cleaning and transformation of the `member_type` column in the "CaBi" data frame. It first displays unique values in the `member_type` column. Then it standardizes the capitalization of 1casual` and `member` categories by replacing inconsistent values with lowercase. It counts the number of rows with the "Unknown" value in the `member_type` column and removes those rows from the data frame since they can't be classified. Finally, it converts the `member_type` column to a factor for efficient storage and analysis.
+The below code is for data cleaning and transformation of the `member_type` column in the "CaBi" data frame. It first displays unique values in the `member_type` column. Then it standardizes the capitalization of `casual` and `member` categories by replacing inconsistent values with lowercase. It counts the number of rows with the "Unknown" value in the `member_type` column and removes those rows from the data frame since they can't be classified. Finally, it converts the `member_type` column to a factor for efficient storage and analysis.
 
 ```{r}
 unique(CaBi$member_type)
@@ -119,7 +120,7 @@ CaBi$member_type <- as.factor(CaBi$member_type)
 
 ```
 
-# Converting `duration` column to a numeric format and rounding it to two decimal places, and removing rows with zero or negative values.
+Converting `duration` column to a numeric format and rounding it to two decimal places, and removing rows with negative values.
 ```{r}
 class(CaBi$duration)
 
@@ -128,7 +129,7 @@ CaBi$duration <- round(as.double(CaBi$duration), 2)
 CaBi <- CaBi[CaBi$duration > 0, ]
 ```
 
-#Standardizing `weather` categories in the `CaBi` data frame by grouping similar weather conditions together and converting it to a factor for efficient storage and analysis.
+Standardizing `weather` categories in the `CaBi` data frame by grouping similar weather conditions together and converting it to a factor for efficient storage and analysis.
 ```{r}
 unique(CaBiO$weather)
 
@@ -156,9 +157,8 @@ unique(CaBi$weekday)
 
 CaBi$weekday <- as.factor(CaBi$weekday)
 ```
-
+Creating a new factor variable `holiday` in the "CaBi" data frame that indicates whether a date is a holiday or not based on the `holiday` column where holiday names are removed and replaced with `holiday` value.
 ```{r}
-# Creating a new factor variable `holiday` in the "CaBi" data frame that indicates whether a date is a holiday or not based on the `holiday` column.
 # unique(CaBi$holiday)
 
 CaBi$holiday[!is.na(CaBi$holiday)] <- "holiday"
@@ -175,24 +175,24 @@ unique(CaBi$season)
 
 CaBi$season <- as.factor(CaBi$season)
 ```
-### Removing the `date` column from the "CaBi" data frame as it is no longer needed for the analysis.
+Removing the `date` column from the "CaBi" data frame as it is no longer needed for the analysis.
 ```{r}
 CaBi$date <- NULL
 
 
 ```
-# Converting `month` column to a factor and changing factor levels to month names for easier interpretation.
+Converting `month` column to a factor and changing factor levels to month names for easier interpretation.
 ```{r}
 CaBi$month <- as.factor(CaBi$month)
 levels(CaBi$month) <- month.name[1:12]
 ```
 
-# Converting `year` column to numeric for efficient storage and analysis.
+Converting `year` column to numeric for efficient storage and analysis.
 ```{r}
 CaBi$year <- as.numeric(CaBi$year)
 
 ```
-# Printing a summary of the "CaBi" data frame, showing the class of each column, and removing the "CaBiO" and "street_address" objects from the environment.
+Printing a summary of the "CaBi" data frame, showing the class of each column, and removing the "CaBiO" object from the environment, so that storage space is used for other objects
 ```{r}
 summary(CaBi)
 sapply(CaBi, class)
@@ -212,8 +212,6 @@ write.csv(CaBi,file = "CaBi_cleaned.csv",row.names = F)
 
 
 ```{r}
-
-
 # Aggregate data by season
 season_data <- aggregate(CaBi$noofbikes, by = list(CaBi$season), FUN = sum)
 
@@ -228,7 +226,7 @@ ggplot(season_data, aes(x=Group.1, y=percentage, fill=Group.1)) +
   labs(title="Bike Rental Demand by Season", x="Season", y="Percentage") +
   scale_fill_manual(values=c("#FFCC66", "#99CC99", "#FF9999", "#89F1FF")) +
   theme_minimal()
-
+```
 
 ```{r}
 # subset the data to include only the relevant variables
@@ -239,13 +237,12 @@ model <- aov(noofbikes ~ season, data = data)
 
 # summary of ANOVA model
 summary(model)
-
 ```
 
 
 
 
-# The below scatter plot shows that bike rental demand is influenced by both temperature and season. It indicates that the demand is highest in the spring and summer, with a peak in May and June, and less in the winter.
+The below scatter plot shows that bike rental demand is influenced by both temperature and season. It indicates that the demand is highest in the spring and summer, with a peak in May and June, and less in the winter.
 ```{r}
 ggplot(CaBi, aes(x = temperature, y = noofbikes, color = season)) +
   geom_point(alpha = 0.5, size = 2.5) +
@@ -255,7 +252,7 @@ ggplot(CaBi, aes(x = temperature, y = noofbikes, color = season)) +
   scale_color_manual(values = c("#FFCC66", "#99CC99", "#FF9999", "#89F1FF"))
 ```
 
-# The below plot shows that bike rental demand is higher on cloudy and clear days, followed by rainy days, and lower on days with overcast snow.
+The below plot shows that bike rental demand is higher on cloudy and clear days, followed by rainy days, and lower on days with overcast snow.
 ```{r}
 ggplot(CaBi, aes(x = weather, y = noofbikes)) + 
   geom_boxplot(fill = "lightblue", alpha = 0.7) +
@@ -264,7 +261,7 @@ ggplot(CaBi, aes(x = weather, y = noofbikes)) +
 
 ```
 
-# The below scatter plot displays the distribution of bike rentals by weather condition, with each point representing the number of bikes rented during a specific weather condition. The plot indicates that the highest demand for bike rentals occurs on cloudy and clear days, followed by rainy and overcast days.
+The below scatter plot displays the distribution of bike rentals by weather condition, with each point representing the number of bikes rented during a specific weather condition. The plot indicates that the highest demand for bike rentals occurs on cloudy and clear days, followed by rainy and overcast days.
 ```{r}
 ggplot() + 
   geom_jitter(aes(weather,noofbikes,color = weather),alpha=0.5, data=CaBi, show.legend = FALSE) + 
@@ -274,7 +271,7 @@ ggplot() +
 
 
 
-# Creating a correlation matrix and plot of the variables in the CaBi dataset.
+Creating a correlation matrix and plot of the variables in the CaBi dataset.
 ```{r}
 
 # Select variables of interest
@@ -292,9 +289,8 @@ corrplot(corr_matrix, type = "upper", order = "hclust", tl.col = "#FF9999", tl.s
 
 
 ```
-# Creating a Shiny app with a checkbox input for selecting the year and a plot output that displays the number of bikes rented in different duration bins. The app uses the ggplot2 package to create a stacked bar chart, where the fill color represents the number of bikes rented. The chart is updated dynamically based on the selected year.
+Creating a Shiny app with a checkbox input for selecting the year and a plot output that displays the number of bikes rented in different duration bins. The app uses the ggplot2 package to create a stacked bar chart, where the fill color represents the number of bikes rented. The chart is updated dynamically based on the selected year.
 ```{r}
-summary(CaBiO$duration)
 
 # Load the data
 data <- CaBiO
@@ -341,7 +337,7 @@ shinyApp(ui = ui, server = server)
 ```
 
 
-# The plot shows the total number of bikes rented in each year grouped by the weekday. The bars are grouped by year and are colored by weekday. The plot suggests that there is a higher demand for bikes on weekdays compared to weekends, and the demand for bikes has been increasing over the years.
+The plot shows the total number of bikes rented in each year grouped by the weekday. The bars are grouped by year and are colored by weekday. The plot suggests that there is a higher demand for bikes on weekdays compared to weekends, and the demand for bikes has been increasing over the years.
 ```{r}
 
 # aggregate data by year and weekday
@@ -363,7 +359,7 @@ ggplot(CaBi_aggregated, aes(x = year, y = Total_Bikes, fill = weekday)) +
         legend.text = element_text(size = 10))
 
 ```
-# Aggregating the total number of bikes rented by holiday and creates a bar plot to show the percentage of total bikes rented for each holiday category (Yes or No). The plot also shows the number of bikes rented for each holiday category.
+Aggregating the total number of bikes rented by holiday and creates a bar plot to show the percentage of total bikes rented for each holiday category (Yes or No). The plot also shows the number of bikes rented for each holiday category.
 ```{r}
 
 # Create a data frame with the total number of bikes rented by holiday
@@ -383,7 +379,7 @@ ggplot(holiday_bikes, aes(x=Group.1, y=percent, fill=Group.1)) +
 
 ```
 
-#  Creating a bar chart showing the number of bike rentals by month, with all bars colored in a single shade of red. There is no legend since there is only one color used.
+Creating a bar chart showing the number of bike rentals by month, with all bars colored in a single shade of red. There is no legend since there is only one color used.
 ```{r}
 
 # Create a bar chart with a single color
@@ -398,7 +394,7 @@ ggplot(CaBi, aes(x = month, y = noofbikes, fill = "#ED4C67")) +
 
 ```
 
-# Summarizing the total number of bikes rented by month, and creates a pie chart showing the proportion of total bikes rented by month. The pie chart uses a different color for each month.
+Summarizing the total number of bikes rented by month, and creates a pie chart showing the proportion of total bikes rented by month. The pie chart uses a different color for each month.
 ```{r}
 # Summarize noofbikes by month
 monthly_bikes <- CaBi %>%
@@ -422,7 +418,7 @@ ggplot(monthly_bikes, aes(x = "", y = total_bikes, fill = factor(month))) +
 
 
 
-# Creating a graph visualization of bike station pairs and their number of trips using the igraph library. Vertex size and color are based on the number of trips, while edge color and width are also based on the number of trips.
+Creating a graph visualization of bike station pairs and their number of trips using the igraph library. Vertex size and color are based on the number of trips, while edge color and width are also based on the number of trips.
 ```{r}
 # Create an edgelist of bike station pairs and their number of trips
 edges <- CaBi %>%
@@ -468,7 +464,7 @@ plot(g, vertex.label = NA)
 ```
 
 
-# Grouping a bike sharing dataframe by year and start station name, calculating the total bikes for each group, and finding the stations with the maximum and minimum total bikes for each year.
+Grouping a bike sharing dataframe by year and start station name, calculating the total bikes for each group, and finding the stations with the maximum and minimum total bikes for each year.
 ```{r}
 # group the dataframe by year and start_station_name, and calculate the total_bikes for each group
 grouped_df <- CaBi %>% 
@@ -496,7 +492,7 @@ min_bikes <- grouped_df %>%
 
 ```
 
-# Creating a line plot with maximum and minimum bike demand by year and station. Firstly grouping the data by year and start station, and finding the stations with the highest and lowest demand for each year. The plot shows the total bikes rented for each station on a line graph for each year, with markers indicating the station name.
+Creating a line plot with maximum and minimum bike demand by year and station. Firstly grouping the data by year and start station, and finding the stations with the highest and lowest demand for each year. The plot shows the total bikes rented for each station on a line graph for each year, with markers indicating the station name.
 ```{r}
 # Create the first line plot with max bike demand data
 plot(max_bikes$year, max_bikes$total_bikes,ylim = c(-10000, 80000), type = "l", col = "red",
@@ -521,7 +517,7 @@ legend("topleft", legend=c("Max Bikes", "Min Bikes"),
 
 
 
-# Grouping the CaBi data by year and holiday status and calculates total bikes. Then creating a stacked line graph using ggplot to visualize bike demand by year and holiday type. The resulting graph shows two lines, one for holidays and one for non-holidays, with different colors representing each category.
+Grouping the CaBi data by year and holiday status and calculates total bikes. Then creating a stacked line graph using ggplot to visualize bike demand by year and holiday type. The resulting graph shows two lines, one for holidays and one for non-holidays, with different colors representing each category.
 ```{r}
 # Group the data by year and holiday status and calculate total bikes
 grouped_df <- CaBi %>% group_by(year, holiday) %>%
@@ -543,7 +539,7 @@ ggplot(grouped_df, aes(x = year, y = total_bikes, color = holiday, group = holid
 
 
 ```{r}
-# Removing all the variables from the environment
+# Removing all the variables from the environment for storage space expect for CaBi df
 rm(bike_count_year_station,bike_counts,CaBi_aggregated,df_agg,df_plot,edges,g,grouped,grouped_df)
 rm(holiday_bikes,map,max_bikes,max_min_bikes,min_bikes,most_popular_stations,popular_stations,season_data,year_weekday_percent)
 rm(corr_matrix,tbl,variables)
