@@ -586,5 +586,103 @@ data.frame(
 
 The Random Forest model has a higher R2 value and lower RMSE and MAE values compared to the regression tree. This suggests that the Random Forest model may be a better fit for the data and may have better predictive performance.
 
+#### Predication model for manual input which predicts the noof bikes for the conditions input we give.
+
+```{r}
+# Load required packages
+library(shiny)
+# Create the user interface
+ui <- fluidPage(
+  
+  # Add input fields for each variable
+  numericInput("noofbikes", "noofbikes:", value = 70),
+  numericInput("temperature", "Temperature:", value = 70.3, min = -30.0, max = 120.0),
+  numericInput("dew", "Dew Point:", value = 10.3, min = -20.0, max = 100.0),
+  numericInput("humidity", "Humidity:", value = 50.23, min = 0.0, max = 100.0),
+  numericInput("windspeed", "Wind Speed:", value = 10.23, min = 0.0, max = 100.0),
+  numericInput("uvindex", "UV Index:", value = 7.000, min = 0.000, max = 10.000),
+  selectInput("weather", "Weather:",
+              choices = c("Cloudy","OvercastRain","Rain","Overcast","Clear","Snow","OvercastSnow"),
+              selected = "Clear"),
+  selectInput("weekday", "weekday:",
+              choices = c("Weekend","weekday"),
+              selected = "Weekend"),
+  selectInput("holiday", "holiday:",
+              choices = c("holiday","not holiday"),
+              selected = "holiday"),
+  # checkboxInput("weekday", "Weekend", value = FALSE),
+  # checkboxInput("holiday", "Holiday:", value = FALSE),
+  selectInput("season", "Season:",
+              choices = c("Winter","Spring","Summer","Fall"),
+              selected = "Winter"),
+  
+  # Add output for predicted number of bikes
+  verbatimTextOutput("pred_output")
+)
+
+# Create the server
+server <- function(input, output) {
+  
+  # Predict number of bikes
+  output$pred_output <- renderPrint({
+    new_data <- data.frame(
+      noofbikes = as.integer(input$noofbikes),
+      temperature = as.numeric(input$temperature),
+      dew = as.numeric(input$dew),
+      humidity = as.numeric(input$humidity),
+      windspeed = as.numeric(input$windspeed),
+      uvindex = as.numeric(input$uvindex),
+      weather = as.factor(input$weather),
+      weekday = as.factor(input$weekday),
+      holiday = as.factor(input$holiday),
+      season = as.factor(input$season)
+    )
+    prediction <- predict(rf_model, new_data)
+    paste("Predicted Number of Bikes: ", round(prediction))
+  })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)
+
+```
+
+```{r}
+
+new_data <-  data.frame("noofbikes"=40,
+                        "temperature" = 50.3,
+                        "dew" = 18.9,
+                        "humidity" = 62.35,
+                        "windspeed" = 13.58,
+                        "uvindex" = 3.001,
+                        "weather" = "Clear",
+                        "weekday" = "Weekend",
+                        "holiday" = "holiday",
+                        "season" = "Summer")
+
+
+new_data$noofbikes <- as.integer(new_data$noofbikes)
+new_data$temperature <- as.numeric(new_data$temperature)
+new_data$dew <- as.numeric(new_data$dew)
+new_data$humidity <- as.numeric(new_data$humidity)
+new_data$windspeed <- as.numeric(new_data$windspeed)
+new_data$uvindex <- as.numeric(new_data$uvindex)
+new_data$weather <- as.character(new_data$weather)
+new_data$weekday <- as.character(new_data$weekday)
+new_data$holiday <- as.character(new_data$holiday)
+new_data$season <- as.character(new_data$season)
+
+
+
+prediction <- predict(rf_model, new_data[2:10])
+    paste("Predicted Number of Bikes: ", round(prediction))
+    
+    
+    
+str(rf_model$forest$xlevels)
+str(new_data[,2:10])
+    
+    
+```
 
 
