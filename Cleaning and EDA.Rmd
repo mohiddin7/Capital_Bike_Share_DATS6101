@@ -1,0 +1,66 @@
+---
+title: "CaBi"
+author: "TEAM SIM"
+date: "2023-04-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+```{r}
+
+library(ezids)
+library(dplyr)
+library(ggmap)
+library(ggplot2)
+library(tidyverse)
+library(corrplot)
+library(knitr)
+library(kableExtra)
+library(tidyr)
+library(lubridate)
+library(shiny)
+library(igraph)
+```
+
+
+```{r}
+# Read in "CaBi.csv" file as a data frame called "CaBi"
+CaBi <- read.csv("CaBi.csv")
+```
+```{r}
+# Displaying the first few rows of the "CaBi" data frame to check its contents and ensure that it was read in correctly.
+head(CaBi)
+```
+
+```{r}
+# citation("ggmap")
+# register_google(key = "put api key here")
+# 
+# geocodes <- geocode(CaBi$start_station_name)
+# 
+# # merge the geocodes back into the original data
+# CaBi <- cbind(CaBi,geocodes)
+# 
+# # create a map using ggmap
+# CaBi_map <- get_map(location = "Washington D.C.", zoom = 12)
+# 
+# # create a dot map on the map
+# ggmap(CaBi_map) +
+#   geom_point(data = CaBi, aes(x = lon, y = lat, fill = my_var), alpha = 0.6, size = 5)
+
+```
+
+```{r}
+# Checking for missing values and duplicates.
+sum(is.na(CaBi))
+sum(is.na(CaBi$holiday))
+
+
+
+sum(duplicated(CaBi))
+
+
+```
