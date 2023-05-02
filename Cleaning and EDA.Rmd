@@ -106,3 +106,11 @@ CaBi <- CaBi[CaBi$member_type != "Unknown", ]
 CaBi$member_type <- as.factor(CaBi$member_type)
 
 ```
+# Converting `duration` column to a numeric format and rounding it to two decimal places, and removing rows with negative values.
+```{r}
+class(CaBi$duration)
+
+CaBi$duration <- round(as.double(CaBi$duration), 2)
+
+CaBi <- CaBi[CaBi$duration > 0, ]
+```
