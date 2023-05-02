@@ -232,6 +232,7 @@ CaBi$date <- format(CaBi$started_at,"%d")
 CaBi$month <- format(CaBi$started_at, "%m")
 CaBi$year <- format(CaBi$started_at, "%Y")
 ```
+Result: converts the "started_at" column in the "CaBi" data frame from a character string to a datetime object in EST format. Then, it creates three new columns in "CaBi" called "date", "month", and "year", which respectively contain the day of the month, numeric month, and four-digit year for each trip.
 
 
 ```{r}
