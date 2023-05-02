@@ -39,7 +39,7 @@ head(CaBi)
 
 ```{r}
 # citation("ggmap")
-# register_google(key = "AIzaSyCFZ6fQYlMH1t8tCJTXVDk4U9rumyz7nzo")
+# register_google(key = "put api key here")
 # 
 # geocodes <- geocode(CaBi$start_station_name)
 # 
