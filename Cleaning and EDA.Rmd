@@ -52,3 +52,15 @@ head(CaBi)
 #   geom_point(data = CaBi, aes(x = lon, y = lat, fill = my_var), alpha = 0.6, size = 5)
 
 ```
+
+```{r}
+# Checking for missing values and duplicates.
+sum(is.na(CaBi))
+sum(is.na(CaBi$holiday))
+
+
+
+sum(duplicated(CaBi))
+
+
+```
