@@ -238,7 +238,7 @@ Result: converts the "started_at" column in the "CaBi" data frame from a charact
 ```{r}
 head(CaBi)
 ```
-
+Result: head(CaBi) is a function call that displays the first few rows of a data frame called "CaBi"
 
 ```{r}
 CaBi <- CaBi[, -c(1, 2)]
