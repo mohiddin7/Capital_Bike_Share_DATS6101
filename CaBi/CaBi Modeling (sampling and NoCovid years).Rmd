@@ -442,3 +442,36 @@ data.frame(
 ```
 
 The R2 score is 0.5086464, which means that the predictor variables explain around 51% of the variance in the target variable.The RMSE is 2682.561, which means that on average, the predicted values are about 2682.561 units away from the actual values.
+
+
+### Spliting the Data by removing covid years
+
+
+From the Above models and results the Accuracy is only 50%. For this the data is randomly split into 80% and 20%. So, Lets remove the covid years from Data set.
+
+Choosing the training data set with years 2010 to 2018 and testing data with years 2022 and 2023. Here 2019 2020 2021 years were ignored for which they are the covid years.
+
+
+```{r}
+
+test_rows <- CaBiforcovid$year %in% c(2022, 2023)
+covid_rows <- CaBiforcovid$year %in% c(2019, 2020,2021)
+
+# split the data into training and test sets
+CaBitraincovid <- CaBiforcovid[!test_rows, ]
+CaBitraincovid <- CaBiforcovid[!covid_rows, ]
+
+CaBitestcovid <- CaBiforcovid[test_rows, ]
+
+summary(CaBitraincovid)
+summary(CaBitestcovid)
+
+# droping feelsliketemp as is similar to temprature 
+CaBitraincovid <- CaBitraincovid[, -c(3,12)]
+CaBitestcovid <- CaBitestcovid[, -c(3,12)]
+
+summary(CaBitraincovid)
+summary(CaBitestcovid)
+```
+
+The total noof observations from the noncovid years Training data `CaBitraincovid` is `r nrow(CaBitraincovid)` observations and in test data set `CaBitestcovid` is `r nrow(CaBitestcovid)` observations
