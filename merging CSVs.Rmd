@@ -84,13 +84,6 @@ nrow(holidays)
 ```
 Result:Selects the first and third columns of the "holidays" data frame, removes duplicate rows based on the "Date" column, and counts the number of unique rows in the resulting data frame. 
 
-```
-holidays <- holidays[c(1,3)]
-holidays <- distinct(holidays, Date, .keep_all = TRUE)
-nrow(holidays)
-```
-
-
 ```{r}
 holidays$Date <- as.Date(paste0(holidays$Date, "-2022"), format = "%b %d-%Y")
 
