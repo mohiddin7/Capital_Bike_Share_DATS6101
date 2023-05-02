@@ -116,4 +116,151 @@ summary(aov(noofbikes~weather,data=CaBi))
 
 
 
+# Modeling
+
+### Linear Regression for Numeric variables Induvidually
+
+#### temperature vs noofbikes
+
+```{r}
+library(ggplot2)
+
+# create scatter plot
+te <- ggplot(data = CaBi, aes(x = temperature, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "temperature vs noofbikes",
+       x = "temperature",
+       y = "noofbikes")
+
+ggplotly(te)
+
+summary(lm(noofbikes ~ temperature, data = CaBi))
+
+```
+
+#### feelsliketemp vs noofbikes
+
+```{r}
+library(ggplot2)
+
+# create scatter plot
+fte <- ggplot(data = CaBi, aes(x = feelsliketemp, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "feelsliketemp vs noofbikes",
+       x = "feelsliketemp",
+       y = "noofbikes")
+
+ggplotly(fte)
+
+summary(lm(noofbikes ~ feelsliketemp, data = CaBi))
+
+```
+
+#### Dew vs noofbikes
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+de <- ggplot(data = CaBi, aes(x = dew, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "Dew vs noofbikes",
+       x = "Dew",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+ggplotly(de)
+
+summary(lm(noofbikes ~ dew, data = CaBi))
+
+```
+
+#### humidity vs noofbikes
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+hu <- ggplot(data = CaBi, aes(x = humidity, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "humidity vs noofbikes",
+       x = "humidity",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+ggplotly(hu)
+summary(lm(noofbikes ~ humidity, data = CaBi))
+
+
+```
+
+#### windspeed vs noofbikes
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+wi <- ggplot(data = CaBi, aes(x = windspeed, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "windspeed vs noofbikes",
+       x = "windspeed",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+ggplotly(wi)
+summary(lm(noofbikes ~ windspeed, data = CaBi))
+
+```
+
+#### uvindex vs noofbikes
+
+```{r}
+library(ggplot2)
+library(plotly)
+
+# create scatter plot
+uv <- ggplot(data = CaBi, aes(x = uvindex, y = noofbikes)) +
+  geom_point(size = 0.5) +
+  
+  # add regression line
+  geom_smooth(method = "lm", se = FALSE) +
+  
+  # add axis labels and title
+  labs(title = "uvindex vs noofbikes",
+       x = "uvindex",
+       y = "noofbikes")
+
+# convert ggplot to plotly object
+ggplotly(uv)
+summary(lm(noofbikes ~ uvindex, data = CaBi))
+
+```
 
