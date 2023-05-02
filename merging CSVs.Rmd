@@ -90,6 +90,8 @@ holidays$Date <- as.Date(paste0(holidays$Date, "-2022"), format = "%b %d-%Y")
 # convert Date object to "dd-mm" format
 holidays$Date <- format(holidays$Date, "%m-%d")
 ```
+Result:Adds the year "2022" to the "Date" column of the "holidays" data frame and converts it to a date format. It uses the `as.Date()` function with the `paste0()` function to concatenate the year and the `format` argument to specify the input format.
+Reformats the "Date" column of the "holidays" data frame from "YYYY-MM-DD" to "%m-%d" format using the format() function. The resulting date format only shows the month and day.
 
 
 
@@ -97,6 +99,7 @@ holidays$Date <- format(holidays$Date, "%m-%d")
 holidays$Date <- strptime(holidays$Date,format="%m-%d",tz = "EST")
 holidays$Date <- format(holidays$Date, "%m-%d")
 ```
+Result:Converts the "Date" column of the "holidays" data frame from character to date-time format with EST timezone using strptime(). The second line reformats the "Date" column back to "%m-%d" format using format().
 
 
 
