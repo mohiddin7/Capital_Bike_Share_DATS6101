@@ -407,3 +407,38 @@ data.frame(
 ```
 
 The R2 score is 0.4016212, which means that the predictor variables explain around 40% of the variance in the target variable.The RMSE is 2961.255, which means that on average, the predicted values are about 2961.255 units away from the actual values.
+
+
+
+#### Random Forest
+The variables that are most important with the Random Forest Model are plotted
+
+```{r}
+library(randomForest)
+
+# Fit a random forest model
+set.seed(123)
+rf_model <- randomForest(noofbikes ~ ., data = CaBitrain,ntree = 498,mtry = sqrt(ncol(CaBitrain)),importance = TRUE)
+rf_model
+
+varImpPlot(rf_model) 
+
+```
+
+```{r}
+# Make predictions on the testing set
+predictions <- predict(rf_model, CaBitest)
+
+# Calculate the root mean squared error
+rmse <- sqrt(mean((predictions - CaBitest$noofbikes)^2))
+
+library(kableExtra)
+data.frame(
+  R2 = R2(predictions, CaBitest$noofbikes),
+  RMSE = RMSE(predictions, CaBitest$noofbikes),
+  MAE = MAE(predictions, CaBitest$noofbikes)
+) %>% kable() %>% kable_styling()
+
+```
+
+The R2 score is 0.5086464, which means that the predictor variables explain around 51% of the variance in the target variable.The RMSE is 2682.561, which means that on average, the predicted values are about 2682.561 units away from the actual values.
