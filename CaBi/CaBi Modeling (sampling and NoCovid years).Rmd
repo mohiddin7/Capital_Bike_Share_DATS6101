@@ -9,6 +9,22 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+# libraries
+
+library(ggplot2)
+library(plotly)
+library(caret)
+library(lift)
+library(rpart)
+library(rpart.plot)
+library(kableExtra)
+library(randomForest)
+library(shiny)
+
+```
+
+
 ## Categorical Variables Test
 
 ### ANOVA for all Categorical Variables
@@ -25,7 +41,7 @@ Instead of doing the sampling with the large data, we mutated the `noofbikes` wi
 
 # option 1 for choosing only the date filter and rows will the noof days from october 2010
 
-# CaBiO <- CaBi
+CaBiO <- CaBi
 CaBi <- CaBiO[, -c(2,3,4,16)]
 CaBi <- CaBi %>% 
   group_by(started_at) %>% 
@@ -72,7 +88,7 @@ CaBi <- CaBi[, -c(1,13)]
 The total noof rows now changes to `r nrow(CaBi)` from `r nrow(CaBiO)`.
 
 ```{r}
-library(ggplot2)
+
 
 
 # Create violin plot for season
@@ -123,7 +139,6 @@ summary(aov(noofbikes~weather,data=CaBi))
 #### temperature vs noofbikes
 
 ```{r}
-library(ggplot2)
 
 # create scatter plot
 te <- ggplot(data = CaBi, aes(x = temperature, y = noofbikes)) +
@@ -146,7 +161,6 @@ summary(lm(noofbikes ~ temperature, data = CaBi))
 #### feelsliketemp vs noofbikes
 
 ```{r}
-library(ggplot2)
 
 # create scatter plot
 fte <- ggplot(data = CaBi, aes(x = feelsliketemp, y = noofbikes)) +
@@ -169,8 +183,6 @@ summary(lm(noofbikes ~ feelsliketemp, data = CaBi))
 #### Dew vs noofbikes
 
 ```{r}
-library(ggplot2)
-library(plotly)
 
 # create scatter plot
 de <- ggplot(data = CaBi, aes(x = dew, y = noofbikes)) +
@@ -194,8 +206,7 @@ summary(lm(noofbikes ~ dew, data = CaBi))
 #### humidity vs noofbikes
 
 ```{r}
-library(ggplot2)
-library(plotly)
+
 
 # create scatter plot
 hu <- ggplot(data = CaBi, aes(x = humidity, y = noofbikes)) +
@@ -219,8 +230,7 @@ summary(lm(noofbikes ~ humidity, data = CaBi))
 #### windspeed vs noofbikes
 
 ```{r}
-library(ggplot2)
-library(plotly)
+
 
 # create scatter plot
 wi <- ggplot(data = CaBi, aes(x = windspeed, y = noofbikes)) +
@@ -243,8 +253,7 @@ summary(lm(noofbikes ~ windspeed, data = CaBi))
 #### uvindex vs noofbikes
 
 ```{r}
-library(ggplot2)
-library(plotly)
+
 
 # create scatter plot
 uv <- ggplot(data = CaBi, aes(x = uvindex, y = noofbikes)) +
@@ -267,7 +276,6 @@ summary(lm(noofbikes ~ uvindex, data = CaBi))
 ### Spliting the Data
 
 ```{r}
-library(caret)
 
 # Set seed for reproducibility
 set.seed(123)
@@ -310,8 +318,6 @@ Overall, the results suggest that the combination of `temperature`, `dew`, `humi
 ### Linear Regression Model for all Variables
 
 ```{r}
-library(caret)
-library(lift)
 set.seed(123)
 
 # Define the training control with 10-fold cross-validation
@@ -334,9 +340,7 @@ In both models, `temperature`, `dew`, `humidity`, `windspeed`, and `uvindex` are
 ### Decision Tree
 
 ```{r}
-library(caret)
-library(rpart)
-library(rpart.plot)
+
 set.seed(123)
 CaBiDT <- caret::train(noofbikes~., data=CaBitrain, method="rpart2", tuneLength = 8, trControl = trainControl(method = "repeatedcv",number =5, repeats = 3))
 CaBiDT
@@ -368,7 +372,6 @@ Now predict this on test data set `CaBitest`
 ```{r}
 CaBiDTPred <- predict(CaBiDT,CaBitest)
 
-library(kableExtra)
 data.frame(
   R2 = R2(CaBiDTPred,CaBitest$noofbikes),
   RMSE = RMSE(CaBiDTPred,CaBitest$noofbikes),
@@ -398,7 +401,6 @@ Now predict this on test data set `CaBitest`
 ```{r}
 CaBiBDTPred <- predict(CaBiBDT,CaBitest)
 
-library(kableExtra)
 data.frame(
   R2 = R2(CaBiBDTPred,CaBitest$noofbikes),
   RMSE = RMSE(CaBiBDTPred,CaBitest$noofbikes),
@@ -414,7 +416,6 @@ The R2 score is 0.4016212, which means that the predictor variables explain arou
 The variables that are most important with the Random Forest Model are plotted
 
 ```{r}
-library(randomForest)
 
 # Fit a random forest model
 set.seed(123)
@@ -432,7 +433,6 @@ predictions <- predict(rf_model, CaBitest)
 # Calculate the root mean squared error
 rmse <- sqrt(mean((predictions - CaBitest$noofbikes)^2))
 
-library(kableExtra)
 data.frame(
   R2 = R2(predictions, CaBitest$noofbikes),
   RMSE = RMSE(predictions, CaBitest$noofbikes),
@@ -480,9 +480,7 @@ The total noof observations from the noncovid years Training data `CaBitraincovi
 ### Decision Tree
 
 ```{r}
-library(caret)
-library(rpart)
-library(rpart.plot)
+
 set.seed(123)
 CaBiDT <- caret::train(noofbikes~., data=CaBitraincovid, method="rpart2", tuneLength = 11, trControl = trainControl(method = "repeatedcv",number =5, repeats = 3))
 CaBiDT
@@ -514,7 +512,6 @@ Now predict this on test data set `CaBitestcovid`
 ```{r}
 CaBiDTPred <- predict(CaBiDT,CaBitestcovid)
 
-library(kableExtra)
 data.frame(
   R2 = R2(CaBiDTPred,CaBitestcovid$noofbikes),
   RMSE = RMSE(CaBiDTPred,CaBitestcovid$noofbikes),
@@ -541,7 +538,6 @@ we can see that temperature, dew, and seasonSummer are the top three variables t
 ```{r}
 CaBiBDTPred <- predict(CaBiBDT,CaBitestcovid)
 
-library(kableExtra)
 data.frame(
   R2 = R2(CaBiBDTPred,CaBitestcovid$noofbikes),
   RMSE = RMSE(CaBiBDTPred,CaBitestcovid$noofbikes),
@@ -556,7 +552,6 @@ The R2 value has increased to 0.6656262, which indicates a better fit of the mod
 The variables that are most important with the Random Forest Model are plotted
 
 ```{r}
-library(randomForest)
 
 # Fit a random forest model
 set.seed(123)
@@ -576,7 +571,6 @@ predictions <- predict(rf_model, CaBitestcovid)
 # Calculate the root mean squared error
 rmse <- sqrt(mean((predictions - CaBitestcovid$noofbikes)^2))
 
-library(kableExtra)
 data.frame(
   R2 = R2(predictions, CaBitestcovid$noofbikes),
   RMSE = RMSE(predictions, CaBitestcovid$noofbikes),
@@ -590,7 +584,6 @@ The Random Forest model has a higher R2 value and lower RMSE and MAE values comp
 
 ```{r}
 # Load required packages
-library(shiny)
 # Create the user interface
 ui <- fluidPage(
   
