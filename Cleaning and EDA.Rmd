@@ -192,3 +192,34 @@ rm(street_address)
 write.csv(CaBi,file = "CaBi_cleaned.csv",row.names = F)
 
 ```
+
+## EDA
+
+
+```{r}
+# Aggregate data by season
+season_data <- aggregate(CaBi$noofbikes, by = list(CaBi$season), FUN = sum)
+
+# Calculate percentages
+season_data$percentage <- season_data$x/sum(season_data$x) * 100
+
+# Create bar chart with percentages and different colors
+ggplot(season_data, aes(x=Group.1, y=percentage, fill=Group.1)) + 
+  geom_bar(stat="identity") + 
+  geom_text(aes(label=paste0(x)), 
+            position=position_stack(vjust=0.5), size=3) +
+  labs(title="Bike Rental Demand by Season", x="Season", y="Percentage") +
+  scale_fill_manual(values=c("#FFCC66", "#99CC99", "#FF9999", "#89F1FF")) +
+  theme_minimal()
+```
+
+```{r}
+# subset the data to include only the relevant variables
+data <- subset(CaBi, select = c(noofbikes, season))
+
+# fit ANOVA model
+model <- aov(noofbikes ~ season, data = data)
+
+# summary of ANOVA model
+summary(model)
+```
