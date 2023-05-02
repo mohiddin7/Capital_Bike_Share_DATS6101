@@ -264,3 +264,69 @@ summary(lm(noofbikes ~ uvindex, data = CaBi))
 
 ```
 
+### Spliting the Data
+
+```{r}
+library(caret)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Split data into 80% training and 20% testing
+train_index <- createDataPartition(CaBi$noofbikes, p = 0.8, list = FALSE)
+CaBitrain <- CaBi[train_index, ]
+CaBitest <- CaBi[-train_index, ]
+
+# droping feelsliketemp as is similar to temprature 
+CaBitrain <- CaBitrain[, -c(3)]
+CaBitest <- CaBitest[, -c(3)]
+
+# Checking the both the data points are same type are not
+summary(CaBitrain)
+summary(CaBitest)
+```
+
+The total noof observations from the Training data `CaBitrain` is `r nrow(CaBitrain)` observations and in test data set `CaBitest` is `r nrow(CaBitest)` observations
+
+### Step Linear Regression Model for Numeric Variables
+
+```{r}
+# Fit a full model with all predictors
+full_model <- lm(noofbikes ~ temperature  + dew + humidity + windspeed + uvindex, data = CaBitrain)
+
+# Perform a backward stepwise regression
+step_model <- step(full_model, direction = "backward")
+summary(step_model)
+
+```
+
+The initial AIC value is 58835.95, and the final AIC value after fitting the linear regression model is 58836. This indicates that the model with all the predictor variables, `temperature`, `dew`, `humidity`, `windspeed`, and `uvindex`, is a good fit for the data.
+
+The R-squared value of the model is 0.3202, indicating that 32.02% of the variance in `noofbikes` can be explained by the predictor variables in the model. The adjusted R-squared value is 0.3193, which adjusts for the number of predictor variables in the model.
+
+Overall, the results suggest that the combination of `temperature`, `dew`, `humidity`, `windspeed`, and `uvindex` can be used to predict the number of bikes rented in CaBitrain.
+
+
+### Linear Regression Model for all Variables
+
+```{r}
+library(caret)
+library(lift)
+set.seed(123)
+
+# Define the training control with 10-fold cross-validation
+train_control <- trainControl(method = "cv", number = 10)
+
+# Train the model using linear regression and 10-fold cross-validation
+model <- train(noofbikes ~ ., data = CaBitrain, method = "lm", trControl = train_control)
+
+# Print the summary of the model
+summary(model)
+
+```
+
+The first model, which includes all five independent variables (`temperature`, `dew`, `humidity`, `windspeed`, and `uvindex`), has an adjusted R-squared value of 0.3193, indicating that these variables explain 31.93% of the variability in the dependent variable. The F-statistic is significant (p-value \< 2.2e-16), indicating that the model is a good fit.
+
+The second model includes all of the independent variables from the first model, as well as additional categorical variables (`weather`, `weekday`, `holiday`, and `season`). This model has an adjusted R-squared value of 0.3961, indicating that these variables explain 39.61% of the variability in the dependent variable. The F-statistic is also significant (p-value \< 2.2e-16), indicating that the model is a good fit.
+
+In both models, `temperature`, `dew`, `humidity`, `windspeed`, and `uvindex` are all significant predictors of `noofbikes`. Additionally, certain categories of the categorical variables are also significant predictors `(i.e., weatherOvercast, weatherOvercastRain, weatherRain, seasonSpring, seasonSummer, and seasonWinter)`. The other categorical variables `(weatherCloudy, weatherOvercastSnow, weekdayWeekend, and holidayNot holiday)` are not significant predictors of `noofbikes`.
