@@ -43,40 +43,45 @@ library(dplyr)
 ```{r}
 # Reads a CSV file and creates a data frame in R.
 CaBi1 <- read.csv("merged_csv1.csv")
-# Result:The CSV file merged_csv1.csv is read and stored as a data frame named CaBi1 in the R environment.
 ```
+Result:The CSV file merged_csv1.csv is read and stored as a data frame named CaBi1 in the R environment.
+
 
 ```{r}
 # Shows the first few rows of the data frame CaBi1.
 head(CaBi1)
-# Result:Displays the first 6 rows of the data frame CaBi1, giving a glimpse of its contents.
 ```
+Result:Displays the first 6 rows of the data frame CaBi1, giving a glimpse of its contents.
 
 ```{r}
 # Returns the number of rows in the data frame CaBi1.
 nrow(CaBi1)
-# Result: Returns the number of rows in the data frame CaBi1. This number represents the total number of observations in the data set.
 ```
+Result:Returns the number of rows in the data frame CaBi1. This number represents the total number of observations in the data set.
 
 
 ```{r}
+# This code chunk groups the CaBi1 data frame by start time, calculates the total number of rides for each start time, creates a line plot of the total rides by start time using the ggplot2 package, and adds axis labels and a title to the plot.
 CaBi1 <- CaBi1 %>% select(-Start.station.number)
 CaBi1 <- CaBi1 %>% select(-Bike.number)
 unique(CaBi1$Member.type)
 ```
+Result:Displays a line plot of the total number of Capital Bikeshare rides by start time, where the x-axis represents the start time in 24-hour clock format and the y-axis represents the total number of rides. The plot includes axis labels and a title.
 
 ```{r}
 #for Hourly
+# These commands prepare the date-time data in the `CaBi1` data frame for time-based analyses by converting the "Start.date" column to a POSIXct date-time object in Eastern Standard Time and rounding it to the nearest hour.
 CaBi1$Start.date <- strptime(CaBi1$Start.date,format="%Y-%m-%d %H:%M:%S",tz = "EST")
 
 CaBi1$Start.date <- format(round(CaBi1$Start.date, units="hours"), format="%Y-%m-%d %H:%M:%S")
 ```
-
+Result:The "Start.date" column of the `CaBi1` data frame is rounded to the nearest hour and converted back to a character string in the format "%Y-%m-%d %H:%M:%S", which can be useful for aggregating the data by hour or for formatting the date-time data in a specific way.
 
 ```{r}
 #For day wise
 CaBi1$Start.date <- strptime(CaBi1$Start.date,format="%Y-%m-%d",tz = "EST")
 ```
+Result: "Start.date" column of CaBi1 data frame is converted to a POSIXct date-time object at midnight in Eastern Standard Time.
 
 ```{r}
 CaBi1 <- CaBi1 %>% 
