@@ -201,6 +201,7 @@ Result:Reads "holidays.csv" file into a data frame named "holidays".Renames colu
 head(holidays)
 unique(holidays$Date)
 ```
+Result:Displays the first few rows of the "holidays" object, while the second line displays the unique values found in the "Date" column of the "holidays" object.
 
 
 ```{r}
