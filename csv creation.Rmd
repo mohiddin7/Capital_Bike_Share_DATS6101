@@ -41,15 +41,21 @@ library(dplyr)
 
 
 ```{r}
+# Reads a CSV file and creates a data frame in R.
 CaBi1 <- read.csv("merged_csv1.csv")
+# Result:The CSV file merged_csv1.csv is read and stored as a data frame named CaBi1 in the R environment.
 ```
 
 ```{r}
+# Shows the first few rows of the data frame CaBi1.
 head(CaBi1)
+# Result:Displays the first 6 rows of the data frame CaBi1, giving a glimpse of its contents.
 ```
 
 ```{r}
+# Returns the number of rows in the data frame CaBi1.
 nrow(CaBi1)
+# Result: Returns the number of rows in the data frame CaBi1. This number represents the total number of observations in the data set.
 ```
 
 
