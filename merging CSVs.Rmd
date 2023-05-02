@@ -217,6 +217,7 @@ CaBi$season <- ifelse(CaBi$temp$mon %in% c(11,0,1), "Winter",
                ifelse(CaBi$temp$mon %in% c(5,6,7), "Summer","Fall")))
 
 ```
+Result:creates a new column called "season" in a data frame called "CaBi". The value in "season" is based on the value in the "mon" column of the "temp" variable. If "mon" is 11, 0, or 1, "season" is "Winter"; if "mon" is 2, 3, or 4, "season" is "Spring"; if "mon" is 5, 6, or 7, "season" is "Summer"; otherwise, "season" is "Fall".
 
 ```{r}
 head(CaBi)
