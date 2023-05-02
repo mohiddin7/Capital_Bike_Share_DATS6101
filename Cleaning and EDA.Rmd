@@ -133,3 +133,36 @@ CaBi$weather[CaBi$weather == "Snow, Rain"] <- "Rain"
 
 CaBi$weather <- as.factor(CaBi$weather)
 ```
+
+
+```{r}
+# Converting "weekday" column to a factor for efficient storage and analysis.
+unique(CaBi$weekday)
+
+
+CaBi$weekday <- as.factor(CaBi$weekday)
+```
+# Creating a new factor variable `holiday` in the "CaBi" data frame that indicates whether a date is a holiday or not based on the `holiday` column where holiday names are removed and replaced with `holiday` value.
+```{r}
+# unique(CaBi$holiday)
+
+CaBi$holiday[!is.na(CaBi$holiday)] <- "holiday"
+CaBi$holiday[is.na(CaBi$holiday)] <- "not holiday"
+
+
+CaBi$holiday <- as.factor(CaBi$holiday)
+```
+
+```{r}
+# Converting `season` column to a factor for efficient storage and analysis.
+unique(CaBi$season)
+
+
+CaBi$season <- as.factor(CaBi$season)
+```
+# Removing the `date` column from the "CaBi" data frame as it is no longer needed for the analysis.
+```{r}
+CaBi$date <- NULL
+
+
+```
