@@ -64,3 +64,14 @@ sum(duplicated(CaBi))
 
 
 ```
+```{r}
+sapply(CaBi, class)
+
+summary(CaBi)
+```
+
+
+```{r}
+CaBiO <- CaBi
+CaBi$started_at <- strptime(CaBi$started_at,format="%Y-%m-%d",tz = "EST")
+```
