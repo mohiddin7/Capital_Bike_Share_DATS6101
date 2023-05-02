@@ -195,7 +195,7 @@ CaBi$t <- format(as.Date(CaBi$temp), "%m-%d")
 
 CaBi <- merge(CaBi,holidays,by.x = "t",by.y = "Date",all.x = TRUE)
 ```
-
+Result:Reads "holidays.csv" file into a data frame named "holidays".Renames column names to "Date" and "Holiday".Merges "holidays" with "CaBi" data frame using "t" column from "CaBi" and "Date" column from "holidays". Save the result to "CaBi". Use all.x=TRUE to keep all the rows from the left data frame.
 
 ```{r}
 head(holidays)
