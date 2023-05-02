@@ -317,3 +317,44 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 
 ```
+# The plot shows the total number of bikes rented in each year grouped by the weekday. The bars are grouped by year and are colored by weekday. The plot suggests that there is a higher demand for bikes on weekdays compared to weekends, and the demand for bikes has been increasing over the years.
+```{r}
+
+# aggregate data by year and weekday
+CaBi_aggregated <- CaBi %>%
+  group_by(year, weekday) %>%
+  summarize(Total_Bikes = sum(noofbikes)) %>%
+  ungroup()
+
+# convert year to factor for plotting purposes
+CaBi_aggregated$year <- as.factor(CaBi_aggregated$year)
+
+ggplot(CaBi_aggregated, aes(x = year, y = Total_Bikes, fill = weekday)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Bike Demand by Year and Weekday", x = "Year", y = "Total Bikes") +
+  theme(plot.title = element_text(size = 14, face = "bold"), 
+        axis.title = element_text(size = 12),
+        axis.text = element_text(size = 10),
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10))
+
+```
+# Aggregating the total number of bikes rented by holiday and creates a bar plot to show the percentage of total bikes rented for each holiday category (Yes or No). The plot also shows the number of bikes rented for each holiday category.
+```{r}
+
+# Create a data frame with the total number of bikes rented by holiday
+holiday_bikes <- aggregate(CaBi$noofbikes, list(CaBi$holiday), sum)
+
+# Create a column with the percentage of total bikes rented by holiday
+holiday_bikes$percent <- holiday_bikes$x / sum(holiday_bikes$x) * 100
+
+# Create the bar plot
+ggplot(holiday_bikes, aes(x=Group.1, y=percent, fill=Group.1)) +
+  geom_bar(stat="identity", color="black") +
+  geom_text(aes(label=x, y=percent+2), size=3, color="black") +
+  scale_fill_manual(values=c("#26B737", "#B72626"), name="Holiday", labels=c("No", "Yes")) +
+  xlab("Holiday") +
+  ylab("Percentage of total bikes rented") +
+  ggtitle("Bike Demand by Holiday")
+
+```
