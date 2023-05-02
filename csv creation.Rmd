@@ -199,6 +199,7 @@ CaBi2$started_at <- strptime(CaBi2$started_at,format="%Y-%m-%d %H:%M:%S",tz = "E
 
 CaBi2$started_at <- format(round(CaBi2$started_at, units="hours"), format="%Y-%m-%d %H:%M:%S")
 ```
+Result:The "started_at" column of the CaBi2 data frame is rounded to the nearest hour and converted back to a character string in the format "%Y-%m-%d %H:%M:%S". This can be useful for aggregating the data by hour or for formatting the date-time data in a specific way.
 
 
 
@@ -209,11 +210,13 @@ CaBi2$started_at <- strptime(CaBi2$started_at,format="%Y-%m-%d",tz = "EST")
 
 CaBi2$started_at <- format(CaBi2$started_at, "%Y-%m-%d")
 ```
+Result:The "started_at" column of the CaBi2 data frame is converted from a character string to a POSIXct date-time object with time set to midnight (00:00:00) and timezone set to Eastern Standard Time, and then formatted to just the date ("%Y-%m-%d").
 
 
 ```{r}
 CaBi2$Duration <- as.double(CaBi2$Duration)
 ```
+Result: 
 
 
 
@@ -225,18 +228,21 @@ CaBi2 <- CaBi2 %>%
   distinct(started_at, start_station_name, .keep_all = TRUE) %>% 
   arrange(started_at,start_station_name)
 ```
+Result: This command converts the "Duration" column of the CaBi2 data frame from a time difference object to a numeric object. This can be useful for performing calculations and aggregations on the duration data.
 
 
 ```{r}
 # for hours
 write.csv(CaBi2,file = "CaBi2hour.csv",row.names = F)
 ```
+Result:The data frame CaBi2 to a CSV file named "CaBi2hour.csv" without row names.
 
 
 ```{r}
 # for days
 write.csv(CaBi2,file = "CaBi2days.csv",row.names = F)
 ```
+Result:The CaBi2 data frame to two separate CSV files named "CaBi2hour.csv" and "CaBi2days.csv" with row names excluded.
 
 
 
