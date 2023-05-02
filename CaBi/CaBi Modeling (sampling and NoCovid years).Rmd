@@ -330,3 +330,50 @@ The first model, which includes all five independent variables (`temperature`, `
 The second model includes all of the independent variables from the first model, as well as additional categorical variables (`weather`, `weekday`, `holiday`, and `season`). This model has an adjusted R-squared value of 0.3961, indicating that these variables explain 39.61% of the variability in the dependent variable. The F-statistic is also significant (p-value \< 2.2e-16), indicating that the model is a good fit.
 
 In both models, `temperature`, `dew`, `humidity`, `windspeed`, and `uvindex` are all significant predictors of `noofbikes`. Additionally, certain categories of the categorical variables are also significant predictors `(i.e., weatherOvercast, weatherOvercastRain, weatherRain, seasonSpring, seasonSummer, and seasonWinter)`. The other categorical variables `(weatherCloudy, weatherOvercastSnow, weekdayWeekend, and holidayNot holiday)` are not significant predictors of `noofbikes`.
+
+### Decision Tree
+
+```{r}
+library(caret)
+library(rpart)
+library(rpart.plot)
+set.seed(123)
+CaBiDT <- caret::train(noofbikes~., data=CaBitrain, method="rpart2", tuneLength = 8, trControl = trainControl(method = "repeatedcv",number =5, repeats = 3))
+CaBiDT
+plot(CaBiDT,main = "Tuning Regression Decision Tree")
+```
+
+The resampling was performed using a 5-fold cross-validation with 3 repetitions, resulting in a total of 15 iterations. The summary of sample sizes indicates that each fold had approximately the same number of samples.
+
+The results show that the optimal value for maxdepth is 8, which gives an RMSE of 2959.329, an R-squared of 0.3784168, and an MAE of 2397.165.
+
+The Decision Tree plot for prediction is
+
+```{r}
+rpart.plot(CaBiDT$finalModel, type = 5, box.palette = "Or", shadow.col = "gray", main = "Decision Tree for predicting the number of bikes")
+```
+
+The importance of the variables from the decision tree
+
+```{r}
+ImpDT <- caret::varImp(CaBiDT)
+ImpDT
+plot(ImpDT,top = 10)
+```
+
+The most important feature is `temperature` with a value of 100, followed by `dew` with a value of 65.81, `uvindex` with a value of 38.52, and so on. The least important feature in this model appears to be `windspeed` with a value of 7.44.
+
+Now predict this on test data set `CaBitest`
+
+```{r}
+CaBiDTPred <- predict(CaBiDT,CaBitest)
+
+library(kableExtra)
+data.frame(
+  R2 = R2(CaBiDTPred,CaBitest$noofbikes),
+  RMSE = RMSE(CaBiDTPred,CaBitest$noofbikes),
+  MAE = MAE(CaBiDTPred,CaBitest$noofbikes)
+) %>% kable() %>% kable_styling()
+```
+
+Decision Tree with 36.65% of the variability in the target variable. The root mean squared error (RMSE) is 3044.444 . The mean absolute error (MAE) is 2440.491.
