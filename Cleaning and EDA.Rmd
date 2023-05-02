@@ -166,3 +166,29 @@ CaBi$date <- NULL
 
 
 ```
+
+# Converting `month` column to a factor and changing factor levels to month names for easier interpretation.
+```{r}
+CaBi$month <- as.factor(CaBi$month)
+levels(CaBi$month) <- month.name[1:12]
+```
+
+# Converting `year` column to numeric for efficient storage and analysis.
+```{r}
+CaBi$year <- as.numeric(CaBi$year)
+
+```
+# Printing a summary of the "CaBi" data frame, showing the class of each column, and removing the "CaBiO" object from the environment, so that storage space is used for other objects
+```{r}
+summary(CaBi)
+sapply(CaBi, class)
+rm(CaBiO)
+rm(street_address)
+```
+
+
+```{r}
+# Exporting the cleaned "CaBi" data frame to a CSV file.
+write.csv(CaBi,file = "CaBi_cleaned.csv",row.names = F)
+
+```
