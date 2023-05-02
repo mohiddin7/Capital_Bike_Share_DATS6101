@@ -43,42 +43,48 @@ library(dplyr)
 ```{r}
 # Reads a CSV file and creates a data frame in R.
 CaBi1 <- read.csv("merged_csv1.csv")
-# Result:The CSV file merged_csv1.csv is read and stored as a data frame named CaBi1 in the R environment.
 ```
+Result:The CSV file merged_csv1.csv is read and stored as a data frame named CaBi1 in the R environment.
+
 
 ```{r}
 # Shows the first few rows of the data frame CaBi1.
 head(CaBi1)
-# Result:Displays the first 6 rows of the data frame CaBi1, giving a glimpse of its contents.
 ```
+Result:Displays the first 6 rows of the data frame CaBi1, giving a glimpse of its contents.
 
 ```{r}
 # Returns the number of rows in the data frame CaBi1.
 nrow(CaBi1)
-# Result: Returns the number of rows in the data frame CaBi1. This number represents the total number of observations in the data set.
 ```
+Result:Returns the number of rows in the data frame CaBi1. This number represents the total number of observations in the data set.
 
 
 ```{r}
+# This code chunk groups the CaBi1 data frame by start time, calculates the total number of rides for each start time, creates a line plot of the total rides by start time using the ggplot2 package, and adds axis labels and a title to the plot.
 CaBi1 <- CaBi1 %>% select(-Start.station.number)
 CaBi1 <- CaBi1 %>% select(-Bike.number)
 unique(CaBi1$Member.type)
 ```
+Result:Displays a line plot of the total number of Capital Bikeshare rides by start time, where the x-axis represents the start time in 24-hour clock format and the y-axis represents the total number of rides. The plot includes axis labels and a title.
 
 ```{r}
 #for Hourly
+# These commands prepare the date-time data in the `CaBi1` data frame for time-based analyses by converting the "Start.date" column to a POSIXct date-time object in Eastern Standard Time and rounding it to the nearest hour.
 CaBi1$Start.date <- strptime(CaBi1$Start.date,format="%Y-%m-%d %H:%M:%S",tz = "EST")
 
 CaBi1$Start.date <- format(round(CaBi1$Start.date, units="hours"), format="%Y-%m-%d %H:%M:%S")
 ```
-
+Result:The "Start.date" column of the `CaBi1` data frame is rounded to the nearest hour and converted back to a character string in the format "%Y-%m-%d %H:%M:%S", which can be useful for aggregating the data by hour or for formatting the date-time data in a specific way.
 
 ```{r}
 #For day wise
 CaBi1$Start.date <- strptime(CaBi1$Start.date,format="%Y-%m-%d",tz = "EST")
 ```
+Result: "Start.date" column of CaBi1 data frame is converted to a POSIXct date-time object at midnight in Eastern Standard Time.
 
 ```{r}
+#Groups CaBi1 by "Start.date" and "Start.station", calculates number of bikes and average duration per group, keeps only distinct rows, and sorts by "Start.date" and "Start.station".
 CaBi1 <- CaBi1 %>% 
   group_by(Start.date, Start.station) %>% 
   mutate(noofBikes = n(), 
@@ -86,23 +92,27 @@ CaBi1 <- CaBi1 %>%
   distinct(Start.date, Start.station, .keep_all = TRUE) %>% 
   arrange(Start.date,Start.station)
 ```
+Result: CaBi1 is updated with "noofBikes" and "Duration" columns and sorted by "Start.date" and "Start.station".
 
 
 ```{r}
 head(CaBi1)
 ```
+Result: The first few rows of the CaBi1 data frame are displayed.
 
 
 ```{r}
 # for hours
 write.csv(CaBi1,file = "CaBi1hour.csv",row.names = F)
 ```
+Result: The CaBi1 data frame is written to a CSV file named "CaBi1hour.csv" without row names.
 
 
 ```{r}
 # for days
 write.csv(CaBi1,file = "CaBi1days.csv",row.names = F)
 ```
+Result: The CaBi1 data frame is written to a CSV file named "CaBi1days.csv" without row names.
 
 
 ```{r}
@@ -122,18 +132,20 @@ write.csv(CaBi1,file = "CaBi1days.csv",row.names = F)
 # 
 # # Merge all the data frames into one
 # merged_csv2 <- do.call(rbind, csv_list)
-
 ```
+Result: The code reads multiple CSV files from a folder, stores them as individual data frames, and then merges all the data frames into a single data frame named "merged_csv2".
 
 ```{r}
 # head(merged_csv2)
 ```
+Result: The first few rows of the merged_csv2 data frame are displayed.
 
 
 ```{r}
 # print(colSums(is.na(merged_csv2)))
 
 ```
+Result: The sum of missing values for each column in the merged_csv2 data frame is printed.
 
 
 ```{r}
@@ -145,6 +157,7 @@ write.csv(CaBi1,file = "CaBi1days.csv",row.names = F)
 # head(merged_csv2)
 # write.csv(merged_csv2,file = "merged_csv2.csv",row.names = F)
 ```
+Result: The first few rows of the merged_csv2 data frame are displayed, and the merged_csv2 data frame is written to a CSV file named "merged_csv2.csv" without row names.
 
 ```{r}
 CaBi2 <- read.csv("merged_csv2.csv")
@@ -164,16 +177,18 @@ summary(CaBi2)
 CaBi2 <- CaBi2 %>% select(-end_station_name)
 
 ```
+Result: The end_station_name column is removed from the CaBi2 data frame.
 
 
 ```{r}
 CaBi2$Duration <- difftime(CaBi2$ended_at, CaBi2$started_at)
 
 ```
+Result: A new column named Duration is added to the CaBi2 data frame containing the difference between the ended_at and started_at columns as a time duration.
 
 
 ```{r}
-
+# This command removes the "ended_at" column from the CaBi2 data frame. It is likely that this column is no longer needed after calculating the duration of each trip in the previous step.
 CaBi2 <- CaBi2 %>% select(-ended_at)
 ```
 
@@ -184,6 +199,7 @@ CaBi2$started_at <- strptime(CaBi2$started_at,format="%Y-%m-%d %H:%M:%S",tz = "E
 
 CaBi2$started_at <- format(round(CaBi2$started_at, units="hours"), format="%Y-%m-%d %H:%M:%S")
 ```
+Result:The "started_at" column of the CaBi2 data frame is rounded to the nearest hour and converted back to a character string in the format "%Y-%m-%d %H:%M:%S". This can be useful for aggregating the data by hour or for formatting the date-time data in a specific way.
 
 
 
@@ -194,11 +210,13 @@ CaBi2$started_at <- strptime(CaBi2$started_at,format="%Y-%m-%d",tz = "EST")
 
 CaBi2$started_at <- format(CaBi2$started_at, "%Y-%m-%d")
 ```
+Result:The "started_at" column of the CaBi2 data frame is converted from a character string to a POSIXct date-time object with time set to midnight (00:00:00) and timezone set to Eastern Standard Time, and then formatted to just the date ("%Y-%m-%d").
 
 
 ```{r}
 CaBi2$Duration <- as.double(CaBi2$Duration)
 ```
+Result: 
 
 
 
@@ -210,18 +228,21 @@ CaBi2 <- CaBi2 %>%
   distinct(started_at, start_station_name, .keep_all = TRUE) %>% 
   arrange(started_at,start_station_name)
 ```
+Result: This command converts the "Duration" column of the CaBi2 data frame from a time difference object to a numeric object. This can be useful for performing calculations and aggregations on the duration data.
 
 
 ```{r}
 # for hours
 write.csv(CaBi2,file = "CaBi2hour.csv",row.names = F)
 ```
+Result:The data frame CaBi2 to a CSV file named "CaBi2hour.csv" without row names.
 
 
 ```{r}
 # for days
 write.csv(CaBi2,file = "CaBi2days.csv",row.names = F)
 ```
+Result:The CaBi2 data frame to two separate CSV files named "CaBi2hour.csv" and "CaBi2days.csv" with row names excluded.
 
 
 
