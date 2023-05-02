@@ -15,12 +15,14 @@ library(dplyr)
 CaBi1 <- read.csv("CaBi1days.csv")
 CaBi2 <- read.csv("CaBi2days.csv")
 ```
+Result: Reads two CSV files named "CaBi1days.csv" and "CaBi2days.csv" into two separate data frames named "CaBi1" and "CaBi2".
 
 
 ```{r}
 head(CaBi1)
 head(CaBi2)
 ```
+Result: These two lines of code display the first six rows of data in the "CaBi1" and "CaBi2" data frames, respectively.
 
 
 
@@ -30,11 +32,13 @@ colnames(CaBi1) <- c("duration", "started_at", "start_station_name","member_type
 colnames(CaBi2) <- c("started_at", "start_station_name","member_type","duration","noofbikes")
 
 ```
+Result:Sets new column names for the "CaBi1" and "CaBi2" data frames, renaming the columns in the order "duration", "started_at", "start_station_name", "member_type", "noofbikes" for "CaBi1", and "started_at", "start_station_name", "member_type", "duration", "noofbikes" for "CaBi2".
 
 
 ```{r}
 CaBi1 <- CaBi1[,c("started_at", "start_station_name","member_type","duration","noofbikes")]
 ```
+Result: Rearranges the columns in the "CaBi1" data frame by selecting and reordering the columns in the order "started_at", "start_station_name", "member_type", "duration", "noofbikes".
 
 
 ```{r}
@@ -46,10 +50,20 @@ head(CaBi2)
 CaBiday <- rbind(CaBi1, CaBi2)
 head(CaBiday)
 ```
+Result: Combines the "CaBi1" and "CaBi2" data frames into a new data frame called "CaBiday" with reordered columns. The `head()` function is used to display the first six rows of "CaBiday". 
+
+```
+CaBiday <- rbind(CaBi1, CaBi2)
+head(CaBiday)
+```
+Result:Combines the "CaBi1" and "CaBi2" data frames into a new data frame called "CaBiday" with reordered columns. The head() function is used to display the first six rows of "CaBiday".
+
+
 
 ```{r}
 write.csv(CaBiday,file = "CaBiday.csv",row.names = F)
 ```
+Result:Writes the "CaBiday" data frame to a CSV file named "CaBiday.csv" in the current working directory, with row names excluded from the output.
 
 
 
