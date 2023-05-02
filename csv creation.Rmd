@@ -12,6 +12,9 @@ library(dplyr)
 
 ```
 
+CSV files Drive folder : https://drive.google.com/drive/folders/10GxigC1SFeK1WMFMoA2KCFU3k7Jnnznd?usp=sharing 
+
+if folder is not shared or not accessible please send a request access
 
 
 The csv files are where downloaded from Capital Bikeshare website, where october 2010 to march 2020 have one set of variables and later ones have the other set. so two folder are created to read in two sets.
