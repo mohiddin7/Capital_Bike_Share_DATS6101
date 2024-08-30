@@ -70,8 +70,9 @@ Future enhancements could include:
 - Expanding the model to include additional external factors, such as major events or public transport disruptions.
 - Developing a more sophisticated model to better account on bike usage patterns.
 
+
 ## Acknowledgments
 
-- (Capital Bikeshare for providing the bike usage data.)[https://www.capitalbikeshare.com/system-data] 
-- (Visual Crossing for weather data.)[https://www.visualcrossing.com/weather/weather-data-services]
-- (Time and Date for holiday data.)[https://www.timeanddate.com/holidays/us/%5Byear%5D/]
+- [Capital Bikeshare for providing the bike usage data](https://www.capitalbikeshare.com/system-data).
+- [Visual Crossing for weather data](https://www.visualcrossing.com/weather/weather-data-services).
+- [Time and Date for holiday data](https://www.timeanddate.com/holidays/us/%5Byear%5D/).
